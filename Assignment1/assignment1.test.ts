@@ -1,23 +1,27 @@
-import { IfElseNode, LessThanNode, NumNode } from './Node'
+import { runInThisContext } from "vm";
 import { Grammar } from "./Grammar";
-import { AndOperator, IfThenElseOperator, LessThanOperator } from './Operator';
-const ite = new IfElseNode(new LessThanNode(new NumNode(4), new NumNode(5)), new NumNode(6), new NumNode(20))
+import { IfThenElseOperator, LessThanOperator, Operator } from './Operator';
 
-
-const grammar = new Grammar(
-    [new AndOperator, new LessThanOperator],
+const grammar1 = new Grammar(
+    [new LessThanOperator],
     [new IfThenElseOperator],
-    [],
+    [1, 2],
     ['x', 'y'],
     [{ 'x': 5, 'y': 10, 'out': 5 }, { 'x': 10, 'y': 5, 'out': 5 }, { 'x': 4, 'y': 3, 'out': 3 }]
 )
-var newPrograms = ite.grow(grammar.initialPrograms, grammar)
 
-let count = 0;
-for (const p of newPrograms) {
-    console.log(++count, p.toString(), p.interpret(grammar.inputOutput[0]))
+function runTest(operator: Operator, grammer: Grammar) {
+    console.log(operator.constructor.name)
+    var newPrograms = operator.grow(grammer.initialPrograms, grammar1)
+
+    let count = 0;
+    for (const p of newPrograms) {
+        console.log(++count, p.toString(), grammer.inputOutput[0], p.interpret(grammar1.inputOutput[0]))
+    }
 }
 
+runTest(grammar1.integerOperations[0], grammar1)
+runTest(grammar1.booleanOperations[0], grammar1)
 
 // let synthesizer = new BottomUpSearch()
 // synthesizer.synthesize(3, new Grammar(

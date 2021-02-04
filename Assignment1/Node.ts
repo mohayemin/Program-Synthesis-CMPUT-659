@@ -1,9 +1,6 @@
-import { type } from "os";
-import { Grammar } from "./Grammar";
 
 export abstract class Node {
     abstract interpret(env: any): number | boolean
-    abstract grow(plist: Node[], grammar: Grammar): Node[]
 }
 
 export class NotNode extends Node {
@@ -17,15 +14,6 @@ export class NotNode extends Node {
 
     interpret(env: any) {
         return !this.left.interpret(env);
-    }
-
-    grow() {
-        // assumption: all items are LT
-
-        // Does not grow because it never produces programs which
-        // has more nodes than previous layer
-        // See 1b of the assignment description for detail
-        return []
     }
 }
 
@@ -41,12 +29,6 @@ export class AndNode extends Node {
     interpret(env: any) {
         return this.left.interpret(env) && this.right.interpret(env)
     }
-
-    grow(plist: Node[]) {
-        if (plist.length <= 1)
-            return []
-        // do the other things
-    }
 }
 
 export class LessThanNode extends Node {
@@ -61,8 +43,6 @@ export class LessThanNode extends Node {
     interpret(env) {
         return this.left.interpret(env) < this.right.interpret(env)
     }
-
-    grow(plist) { return [] }
 }
 
 export class IfElseNode extends Node {
@@ -83,21 +63,6 @@ export class IfElseNode extends Node {
         else
             return this.false_case.interpret(env)
     }
-
-    grow(plist: Node[], grammar: Grammar) {
-        const outPList: Node[] = [];
-        for (const bo of grammar.booleanOperations) {
-            for (const pi of plist) {
-                for (const pj of plist) {
-                    if (bo.accepts(pi, pj)) {
-                        outPList.push(new IfElseNode(bo.createNode(pi, pj), pi, pj))
-                    }
-                }
-            }
-        }
-
-        return outPList;
-    }
 }
 
 export class NumNode extends Node {
@@ -111,8 +76,6 @@ export class NumNode extends Node {
     interpret(env) {
         return this.value
     }
-
-    grow(plist, new_plist) { return [] }
 }
 
 export class VarNode extends Node {
@@ -127,8 +90,6 @@ export class VarNode extends Node {
     interpret(env) {
         return env[this.name]
     }
-
-    grow(plist, new_plist) { return [] }
 }
 
 export abstract class ArithmaticNode extends Node {
@@ -149,22 +110,6 @@ export abstract class ArithmaticNode extends Node {
     }
 
     abstract createNew(newLeft: Node, newRight: Node): Node;
-
-    grow(plist: Node[]) {
-        const outPList = [];
-        for (let i = 0; i < plist.length; i++) {
-            const pi = plist[i];
-            for (let j = i; j < plist.length; j++) {
-                const pj = plist[j];
-                if (pi instanceof NumNode && pj instanceof NumNode)
-                    continue
-
-                outPList.push(this.createNew(pi, pj))
-            }
-        }
-
-        return outPList;
-    }
 }
 
 export class PlusNode extends ArithmaticNode {
@@ -194,5 +139,3 @@ export class Times extends ArithmaticNode {
         return new Times(newLeft, newRight)
     }
 }
-
-type NodeClass = new (...args: any[]) => Node

@@ -1,29 +1,41 @@
+import { Grammar } from "./Grammar";
 import { AndNode, IfElseNode, LessThanNode, Node, NotNode, NumNode, PlusNode, Times, VarNode } from "./Node";
 
 export interface Operator {
-    accepts(...operands: Node[]): boolean;
-    createNode(...nodes: Node[]): Node;
+    accepts(...operands: Node[]): boolean
+    grow(plist: Node[], grammar: Grammar): Node[]
+    createNode(...components: Node[]): Node
 }
 
-export abstract class DefaultOperator implements Operator {
+export abstract class BooleanOperator implements Operator {
     constructor(private operandCount: number) {
     }
-
 
     accepts(...operands: Node[]): boolean {
         return operands.length === this.operandCount &&
             operands.every(o => this.acceptsOperand(o))
     }
 
-    abstract acceptsOperand(operand: Node): boolean
+    protected abstract acceptsOperand(operand: Node): boolean
+    abstract createNode(...components: Node[]): Node
+    grow(plist: Node[], grammar: Grammar): Node[] {
+        const outPList: Node[] = [];
+        for (const pi of plist) {
+            for (const pj of plist) {
+                if(this.accepts(pi, pj))
+                    outPList.push(this.createNode(pi, pj))
+            }
+        }
 
-    abstract createNode(...nodes: Node[]): Node;
+        return outPList
+    }
 }
 
-export class AndOperator extends DefaultOperator {
+export class AndOperator extends BooleanOperator {
     constructor() {
         super(2)
     }
+
     acceptsOperand(operand: Node): boolean {
         return operand instanceof LessThanNode
     }
@@ -33,7 +45,7 @@ export class AndOperator extends DefaultOperator {
     }
 }
 
-export class LessThanOperator extends DefaultOperator {
+export class LessThanOperator extends BooleanOperator {
     constructor() {
         super(2)
     }
@@ -45,13 +57,26 @@ export class LessThanOperator extends DefaultOperator {
             operand instanceof Times
     }
 
-    createNode(...nodes: Node[]): Node {
-        return new LessThanNode(nodes[0], nodes[1])
+    createNode(...children: Node[]): Node {
+        return new LessThanNode(children[0], children[1])
     }
 }
 
 export class IfThenElseOperator implements Operator {
+    grow(plist: Node[], grammar: Grammar): Node[] {
+        const outPList: Node[] = [];
+        for (const first of plist) {
+            for (const second of plist) {
+                for (const bo of grammar.booleanOperations) {
+                    if (bo.accepts(first, second)) {
+                        outPList.push(new IfElseNode(bo.createNode(first, second), first, second))
+                    }
+                }
+            }
+        }
 
+        return outPList
+    }
     accepts(...operands: Node[]): boolean {
         if (operands.length != 3)
             return false
