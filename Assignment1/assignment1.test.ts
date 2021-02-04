@@ -1,4 +1,5 @@
 import { runInThisContext } from "vm";
+import { BottomUpSearch } from "./BottomUpSearch";
 import { Grammar } from "./Grammar";
 import { IfThenElseOperator, LessThanOperator, Operator } from './Operator';
 
@@ -20,8 +21,12 @@ function runTest(operator: Operator, grammer: Grammar) {
     }
 }
 
-runTest(grammar1.integerOperations[0], grammar1)
-runTest(grammar1.booleanOperations[0], grammar1)
+// runTest(grammar1.integerOperations[0], grammar1)
+// runTest(grammar1.booleanOperations[0], grammar1)
+
+const bus = new BottomUpSearch()
+const out = bus.synthesize(3, grammar1)
+console.log(out.toString())
 
 // let synthesizer = new BottomUpSearch()
 // synthesizer.synthesize(3, new Grammar(

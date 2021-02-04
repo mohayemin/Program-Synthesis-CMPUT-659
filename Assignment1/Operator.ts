@@ -1,5 +1,5 @@
 import { Grammar } from "./Grammar";
-import { AndNode, IfElseNode, LessThanNode, Node, NotNode, NumNode, PlusNode, Times, VarNode } from "./Node";
+import { AndNode, BooleanNode, IfElseNode, LessThanNode, Node, NotNode, NumNode, PlusNode, Times, VarNode } from "./Node";
 
 export interface Operator {
     accepts(...operands: Node[]): boolean
@@ -37,11 +37,11 @@ export class AndOperator extends BooleanOperator {
     }
 
     acceptsOperand(operand: Node): boolean {
-        return operand instanceof LessThanNode
+        return operand instanceof BooleanNode
     }
 
     createNode(...nodes: Node[]): Node {
-        return new AndNode(nodes[0], nodes[1])
+        return new AndNode(nodes[0] as BooleanNode, nodes[1] as BooleanNode)
     }
 }
 
