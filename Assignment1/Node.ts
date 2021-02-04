@@ -108,8 +108,6 @@ export abstract class ArithmaticNode extends Node {
     toString() {
         return `(${this.left} ${this.symbol} ${this.right})`
     }
-
-    abstract createNew(newLeft: Node, newRight: Node): Node;
 }
 
 export class PlusNode extends ArithmaticNode {
@@ -120,10 +118,6 @@ export class PlusNode extends ArithmaticNode {
     operate(leftVal: number, rightVal: number) {
         return leftVal + rightVal
     }
-
-    createNew(newLeft: Node, newRight: Node) {
-        return new PlusNode(newLeft, newRight)
-    }
 }
 
 export class Times extends ArithmaticNode {
@@ -133,9 +127,5 @@ export class Times extends ArithmaticNode {
 
     operate(leftVal: number, rightVal: number) {
         return leftVal * rightVal
-    }
-
-    createNew(newLeft: Node, newRight: Node) {
-        return new Times(newLeft, newRight)
     }
 }
