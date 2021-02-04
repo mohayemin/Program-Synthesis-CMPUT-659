@@ -1,7 +1,6 @@
-import { runInThisContext } from "vm";
 import { BottomUpSearch } from "./BottomUpSearch";
 import { Grammar } from "./Grammar";
-import { IfThenElseOperator, LessThanOperator, Operator } from './Operator';
+import { AndOperator, IfThenElseOperator, LessThanOperator, NotOperator, Operator, PlusOperator, TimesOperator } from './Operator';
 
 const grammar1 = new Grammar(
     [new LessThanOperator],
@@ -9,6 +8,14 @@ const grammar1 = new Grammar(
     [1, 2],
     ['x', 'y'],
     [{ 'x': 5, 'y': 10, 'out': 5 }, { 'x': 10, 'y': 5, 'out': 5 }, { 'x': 4, 'y': 3, 'out': 3 }]
+)
+
+const grammer2 = new Grammar(
+    [new AndOperator, new LessThanOperator, new NotOperator],
+    [new PlusOperator, new TimesOperator, new LessThanOperator],
+    [10],
+    ['x', 'y'],
+    [{'x':5, 'y': 10, 'out':5}, {'x':10, 'y': 5, 'out':5}, {'x':4, 'y': 3, 'out':4}, {'x':3, 'y': 4, 'out':4}]
 )
 
 function runTest(operator: Operator, grammer: Grammar) {
@@ -24,9 +31,15 @@ function runTest(operator: Operator, grammer: Grammar) {
 // runTest(grammar1.integerOperations[0], grammar1)
 // runTest(grammar1.booleanOperations[0], grammar1)
 
-const bus = new BottomUpSearch()
-const out = bus.synthesize(3, grammar1)
-console.log(out.toString())
+function runBus(grammar: Grammar) {
+    const bus = new BottomUpSearch()
+    const out = bus.synthesize(3, grammar)
+    console.log(out.toString())
+}
+
+// runBus(grammar1)
+runBus(grammer2)
+
 
 // let synthesizer = new BottomUpSearch()
 // synthesizer.synthesize(3, new Grammar(

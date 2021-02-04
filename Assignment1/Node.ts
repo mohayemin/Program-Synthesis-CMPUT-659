@@ -136,7 +136,7 @@ export class PlusNode extends ArithmaticNode {
     }
 }
 
-export class Times extends ArithmaticNode {
+export class TimesNode extends ArithmaticNode {
     constructor(left: Node, right: Node) {
         super(left, right, '*')
     }
