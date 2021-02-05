@@ -77,11 +77,12 @@ export class NotOperator extends BooleanOperator {
 export class IfThenElseOperator implements Operator {
     grow(plist: Node[], grammar: Grammar): Node[] {
         const newPrograms: Node[] = [];
-        for (const first of plist) {
-            for (const second of plist) {
-                for (const bo of grammar.booleanOperations) {
-                    if (bo.accepts(first, second)) {
-                        newPrograms.push(new IfElseNode(bo.createNode(first, second), first, second))
+        for (const bo of grammar.booleanOperations) {
+            const allConditions = bo.grow(plist, grammar)
+            for (const first of plist) {
+                for (const second of plist) {
+                    for (const condition of allConditions) {
+                        newPrograms.push(new IfElseNode(condition, first, second))
                     }
                 }
             }

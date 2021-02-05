@@ -7,15 +7,18 @@ export class BottomUpSearch {
     }
 
     grow(plist: Node[], grammer: Grammar, outputCache: Set<string>): void {
+        let newPrograms: Node[] = []
         for (const op of grammer.allOperations) {
-            const newPrograms = op.grow(plist, grammer)
-            for (const program of newPrograms) {
-                const out = grammer.inputOutput.map(io => program.interpret(io))
-                const normalOut = this.normalizeOutput(out)
-                if(!outputCache.has(normalOut)){
-                    outputCache.add(normalOut)
-                    plist.push(program)
-                }
+            newPrograms = newPrograms.concat(op.grow(plist, grammer))
+        }
+
+        for (const program of newPrograms) {
+            const out = grammer.inputOutput.map(io => program.interpret(io))
+            const normalOut = this.normalizeOutput(out)
+            if(!outputCache.has(normalOut)){
+                outputCache.add(normalOut)
+                plist.push(program)
+                console.log(program.toString())
             }
         }
     }
