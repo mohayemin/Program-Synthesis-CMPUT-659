@@ -18,7 +18,6 @@ export class BottomUpSearch {
             if(!outputCache.has(normalOut)){
                 outputCache.add(normalOut)
                 plist.push(program)
-                console.log(program.toString())
             }
         }
     }

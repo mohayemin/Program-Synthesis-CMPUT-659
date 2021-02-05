@@ -6,6 +6,7 @@ export class Grammar {
     allOperations: Operator[];
     initialPrograms: Node[];
     constructor(
+        public name: string,
         public booleanOperations: BooleanOperator[],
         public integerOperations: Operator[],
         public values: number[],
