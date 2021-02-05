@@ -12,7 +12,7 @@ const grammar1 = new Grammar(
 
 const grammer2 = new Grammar(
     [new AndOperator, new LessThanOperator, new NotOperator],
-    [new PlusOperator, new TimesOperator, new LessThanOperator],
+    [new PlusOperator, new TimesOperator, new IfThenElseOperator],
     [10],
     ['x', 'y'],
     [{'x':5, 'y': 10, 'out':5}, {'x':10, 'y': 5, 'out':5}, {'x':4, 'y': 3, 'out':4}, {'x':3, 'y': 4, 'out':4}]
@@ -37,7 +37,7 @@ function runBus(grammar: Grammar) {
     console.log(out.toString())
 }
 
-// runBus(grammar1)
+//runBus(grammar1)
 runBus(grammer2)
 
 

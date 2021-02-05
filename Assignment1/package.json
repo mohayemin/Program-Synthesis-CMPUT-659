@@ -4,8 +4,7 @@
   "description": "",
   "main": "assignment1.ts",
   "scripts": {
-    "start": "ts-node assignment1.test.ts",
-    "test": "jasmine"
+    "start": "ts-node assignment1.test.ts"
   },
   "author": "mohayemin@ualberta.ca",
   "license": "MIT",

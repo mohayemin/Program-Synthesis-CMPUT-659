@@ -70,24 +70,24 @@ export class NotOperator extends BooleanOperator {
         return operand instanceof BooleanNode
     }
     createNode(...components: Node[]): Node {
-        return new NotNode(components[0])
+        return new NotNode(components[0] as BooleanNode)
     }
 }
 
 export class IfThenElseOperator implements Operator {
     grow(plist: Node[], grammar: Grammar): Node[] {
-        const outPList: Node[] = [];
+        const newPrograms: Node[] = [];
         for (const first of plist) {
             for (const second of plist) {
                 for (const bo of grammar.booleanOperations) {
                     if (bo.accepts(first, second)) {
-                        outPList.push(new IfElseNode(bo.createNode(first, second), first, second))
+                        newPrograms.push(new IfElseNode(bo.createNode(first, second), first, second))
                     }
                 }
             }
         }
 
-        return outPList
+        return newPrograms
     }
     accepts(...operands: Node[]): boolean {
         if (operands.length != 3)

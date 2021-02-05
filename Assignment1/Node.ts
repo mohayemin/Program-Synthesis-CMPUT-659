@@ -9,21 +9,6 @@ export abstract class Node {
     abstract interpret(env: Env): number
 }
 
-export class NotNode extends Node {
-    constructor(public left: Node) {
-        super()
-    }
-
-    toString() {
-        return 'not (' + this.left + ')'
-    }
-
-    interpret(env: Env) {
-        const result = this.left.interpret(env)
-        return result === 0 ? 1 : 0;
-    }
-}
-
 export abstract class BooleanNode extends Node {
     abstract interpretBool(env: Env): boolean
 
@@ -33,6 +18,19 @@ export abstract class BooleanNode extends Node {
     }
 }
 
+export class NotNode extends BooleanNode {
+    constructor(public left: BooleanNode) {
+        super()
+    }
+
+    toString() {
+        return 'not (' + this.left + ')'
+    }
+
+    interpretBool(env: Env) {
+        return !this.left.interpretBool(env)
+    }
+}
 export class AndNode extends BooleanNode {
     constructor(public left: BooleanNode, public right: BooleanNode) {
         super();
