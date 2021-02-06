@@ -1,4 +1,5 @@
 import { BottomUpSearch } from "./BottomUpSearch";
+import { BFSNumberSymbolNode, BFSValueNode } from "./BreadthFirstSearch";
 import { Grammar } from "./Grammar";
 import { AndOperator, IfThenElseOperator, LessThanOperator, NotOperator, Operator, PlusOperator, TimesOperator } from './Operator';
 
@@ -66,15 +67,22 @@ function runBus(grammar: Grammar) {
     console.log(`=== ${grammar.name} ===`)
     const bus = new BottomUpSearch(3, grammar)
     const result = bus.synthesize()
-    console.log(`* Program: ${result.program.toString()}` )
+    console.log(`* Program: ${result.program.toString()}`)
     console.log(`* Execution time: ${result.executionDurationMs}ms`)
     console.log(`* Programs generated: ${result.programsGenerated}`)
-    console.log(`* Programs evaluated: ${result.programsEvaluated} (${(100*result.programsEvaluated/result.programsGenerated).toFixed(2)}%)`)
+    console.log(`* Programs evaluated: ${result.programsEvaluated} (${(100 * result.programsEvaluated / result.programsGenerated).toFixed(2)}%)`)
 
     console.log()
 }
 
-runBus(grammar1)
-runBus(grammar2)
-runBus(grammar3)
+//runBus(grammar1)
+//runBus(grammar2)
+//runBus(grammar3)
 
+function testChildren() {
+    const numSym = new BFSNumberSymbolNode()
+    const children = numSym.children(grammar1)
+    console.log(children.length)
+}
+
+testChildren()

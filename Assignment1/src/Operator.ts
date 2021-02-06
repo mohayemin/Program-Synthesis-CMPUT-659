@@ -1,18 +1,22 @@
-import { BFSNode } from "./BreadthFirstSearch";
+import { BFSBooleanSymbolNode, BFSCompositeNode, BFSNode, BFSNumberSymbolNode } from "./BreadthFirstSearch";
 import { Grammar } from "./Grammar";
 import { AndNode, BooleanNode, IfElseNode, LessThanNode, Node, NotNode, NumNode, PlusNode, TimesNode, VarNode } from "./Node";
 
 export interface Operator {
-    expand(bfsNode: BFSNode, grammar: Grammar): BFSNode[]
     accepts(...operands: Node[]): boolean
     grow(plist: Node[], grammar: Grammar): Node[]
     createNode(...components: Node[]): Node
+    evaluate(values: number[]): number
+    createDefaultBFSNode(): BFSNode
 }
 
 export abstract class BooleanOperator implements Operator {
     constructor(private operandCount: number) {
     }
-    
+
+    abstract createDefaultBFSNode(): BFSNode 
+    abstract evaluate(values: number[]): number
+
     accepts(...operands: Node[]): boolean {
         return operands.length === this.operandCount &&
             operands.every(o => this.acceptsOperand(o))
@@ -31,7 +35,6 @@ export abstract class BooleanOperator implements Operator {
 
         return outPList
     }
-    abstract expand(bfsNode: BFSNode, grammar: Grammar): BFSNode[]
 }
 
 export class AndOperator extends BooleanOperator {
@@ -47,8 +50,12 @@ export class AndOperator extends BooleanOperator {
         return new AndNode(nodes[0] as BooleanNode, nodes[1] as BooleanNode)
     }
 
-    expand(bfsNode: BFSNode, grammar: Grammar): BFSNode[] {
-        throw new Error("Method not implemented.");
+    evaluate(values: number[]): number {
+        return values[0] && values[1]
+    }
+
+    createDefaultBFSNode() {
+        return new BFSCompositeNode(this, new BFSBooleanSymbolNode(), new BFSBooleanSymbolNode())
     }
 }
 
@@ -68,15 +75,16 @@ export class LessThanOperator extends BooleanOperator {
         return new LessThanNode(children[0], children[1])
     }
 
-    expand(bfsNode: BFSNode, grammar: Grammar): BFSNode[] {
-        throw new Error("Method not implemented.");
+    evaluate(values: number[]): number {
+        return values[0] < values[1] ? 1 : 0
+    }
+
+    createDefaultBFSNode() {
+        return new BFSCompositeNode(this, new BFSNumberSymbolNode(), new BFSNumberSymbolNode())
     }
 }
 
 export class NotOperator extends BooleanOperator {
-    expand(bfsNode: any, grammar: Grammar): any[] {
-        throw new Error("Method not implemented.");
-    }
     constructor() {
         super(1);
     }
@@ -86,12 +94,15 @@ export class NotOperator extends BooleanOperator {
     createNode(...components: Node[]): Node {
         return new NotNode(components[0] as BooleanNode)
     }
+    evaluate(values: number[]): number {
+        return values[0] === 0 ? 1 : 0
+    }
+    createDefaultBFSNode() {
+        return new BFSCompositeNode(this, new BFSBooleanSymbolNode())
+    }
 }
 
 export class IfThenElseOperator implements Operator {
-    expand(bfsNode: any, grammar: Grammar): any[] {
-        throw new Error("Method not implemented.");
-    }
     grow(plist: Node[], grammar: Grammar): Node[] {
         const newPrograms: Node[] = [];
         for (const bo of grammar.booleanOperations) {
@@ -118,12 +129,16 @@ export class IfThenElseOperator implements Operator {
     createNode(...nodes: Node[]): Node {
         return new IfElseNode(nodes[0], nodes[1], nodes[2])
     }
+    evaluate(values: number[]): number {
+        return values[0] ? values[1] : values[2]
+    }
+    createDefaultBFSNode(): BFSNode {
+        return new BFSCompositeNode(this, new BFSBooleanSymbolNode(), new BFSNumberSymbolNode(), new BFSNumberSymbolNode())
+    }
 }
 
 export abstract class ArithmeticOperator implements Operator {
-    expand(bfsNode: any, grammar: Grammar): any[] {
-        throw new Error("Method not implemented.");
-    }
+    
     acceptsOperand(operand: Node) {
         return operand instanceof VarNode ||
             operand instanceof NumNode ||
@@ -156,17 +171,29 @@ export abstract class ArithmeticOperator implements Operator {
         return newPrograms
     }
 
-    abstract createNode(...components: Node[]): Node;
+    abstract evaluate(values: number[]): number
+    abstract createNode(...components: Node[]): Node
+    createDefaultBFSNode() {
+        return new BFSCompositeNode(this, new BFSNumberSymbolNode(), new BFSNumberSymbolNode())
+    }
 }
 
 export class PlusOperator extends ArithmeticOperator {
     createNode(...components: Node[]): Node {
         return new PlusNode(components[0], components[1])
     }
+
+    evaluate(values: number[]): number {
+        return values[0] + values[1]
+    }
 }
 
 export class TimesOperator extends ArithmeticOperator {
     createNode(...components: Node[]): Node {
         return new TimesNode(components[0], components[1])
+    }
+
+    evaluate(values: number[]): number {
+        return values[0] * values[1]
     }
 }

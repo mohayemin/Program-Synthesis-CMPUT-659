@@ -1,5 +1,6 @@
 import { Grammar } from "./Grammar";
 import { Node } from "./Node";
+import { Operator } from "./Operator";
 
 export class BreadthFirstSearch {
     synthesize(grammar: Grammar): Node {
@@ -10,30 +11,97 @@ export class BreadthFirstSearch {
 export interface BFSNode {
     children(grammar: Grammar): BFSNode[]
     isTerminal(): boolean
+    clone(): BFSNode
 }
 
-export class BFSCompositeNode {
-    private firstNonTerminalNode: BFSNode
-    constructor(private parts: BFSNode[]) {
-        this.firstNonTerminalNode =  this.parts.find(p => !p.isTerminal())
+export class BFSCompositeNode implements BFSNode {
+    private firstSymbolIndex: number
+    private parts: BFSNode[]
+    constructor(private operator: Operator, ...parts: BFSNode[]) {
+        this.parts = parts
+        this.firstSymbolIndex = this.parts.findIndex(p => !p.isTerminal())
     }
+
     children(grammar: Grammar): BFSNode[] {
-        if(!this.firstNonTerminalNode)
+        if (this.firstSymbolIndex < 0)
             return []
-        const children = grammar.allOperations.flatMap(op => op.expand(this.firstNonTerminalNode, grammar))
+        const replacements = this.parts[this.firstSymbolIndex].children(grammar)
+        const children = []
+        for (const replacement of replacements) {
+            const child = this.clone() as BFSCompositeNode
+            child.parts[this.firstSymbolIndex] = replacement
+            children.push(child)
+        }
         return children
     }
+
     isTerminal() {
-        return !!this.firstNonTerminalNode
+        return !!this.firstSymbolIndex
+    }
+
+    clone() {
+        const partClones = this.parts.map(p => p.clone())
+        return new BFSCompositeNode(this.operator, ...partClones)
     }
 }
 
-export class BFSSymbolNode {
-    constructor(private replacements: BFSNode[]) {
-        
+export class BFSBooleanSymbolNode implements BFSNode {
+    children(grammar: Grammar): BFSNode[] {
+        return grammar.booleanOperations.map(op => op.createDefaultBFSNode())
+    }
+    isTerminal(): boolean {
+        return true
+    }
+    clone(): BFSNode {
+        return new BFSBooleanSymbolNode()
+    }
+
+}
+
+export class BFSNumberSymbolNode implements BFSNode {
+    constructor() {
+
+    }
+
+    isTerminal(): boolean {
+        return false
     }
 
     children(grammar: Grammar): BFSNode[] {
-        return this.replacements
+        const valueChildren = grammar.values.map(v => new BFSValueNode())
+        const variableChildren = grammar.variables.map(v => new BFSVariableNode())
+        const symbolChildren = grammar.integerOperations.map(op => op.createDefaultBFSNode())
+        return [].concat(valueChildren, variableChildren, symbolChildren)
+    }
+
+    clone() {
+        return new BFSNumberSymbolNode()
+    }
+}
+
+export class BFSValueNode implements BFSNode {
+    children(grammar: Grammar): BFSNode[] {
+        return []
+    }
+
+    isTerminal(): boolean {
+        return true
+    }
+
+    clone() {
+        return new BFSValueNode()
+    }
+}
+
+export class BFSVariableNode implements BFSNode {
+    children(grammar: Grammar): BFSNode[] {
+        return []
+    }
+    isTerminal(): boolean {
+        return true
+    }
+
+    clone() {
+        return new BFSVariableNode()
     }
 }
