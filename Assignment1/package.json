@@ -2,9 +2,9 @@
   "name": "assignment-1",
   "version": "1.0.0",
   "description": "",
-  "main": "assignment1.ts",
+  "main": "src/Main.ts",
   "scripts": {
-    "start": "ts-node assignment1.test.ts"
+    "start": "ts-node src/Main.ts"
   },
   "author": "mohayemin@ualberta.ca",
   "license": "MIT",
