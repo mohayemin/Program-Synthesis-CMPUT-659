@@ -82,7 +82,8 @@ function runBus(grammar: Grammar) {
 function testChildren() {
     const numSym = new BFSNumberSymbolNode()
     const children = numSym.children(grammar1)
-    console.log(children.length)
+    const grandChildren = children[4].children(grammar1)
+    console.log(grandChildren)
 }
 
 testChildren()

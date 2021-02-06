@@ -8,14 +8,16 @@ export interface Operator {
     createNode(...components: Node[]): Node
     evaluate(values: number[]): number
     createDefaultBFSNode(): BFSNode
+    stringify(...parts: BFSNode[]): string
 }
 
 export abstract class BooleanOperator implements Operator {
     constructor(private operandCount: number) {
     }
 
-    abstract createDefaultBFSNode(): BFSNode 
+    abstract createDefaultBFSNode(): BFSNode
     abstract evaluate(values: number[]): number
+    abstract stringify(...parts: BFSNode[]): string
 
     accepts(...operands: Node[]): boolean {
         return operands.length === this.operandCount &&
@@ -57,6 +59,10 @@ export class AndOperator extends BooleanOperator {
     createDefaultBFSNode() {
         return new BFSCompositeNode(this, new BFSBooleanSymbolNode(), new BFSBooleanSymbolNode())
     }
+
+    stringify(...parts: BFSNode[]) {
+        return `${parts[0].toString()} && ${parts[1].toString()}`
+    }
 }
 
 export class LessThanOperator extends BooleanOperator {
@@ -82,6 +88,10 @@ export class LessThanOperator extends BooleanOperator {
     createDefaultBFSNode() {
         return new BFSCompositeNode(this, new BFSNumberSymbolNode(), new BFSNumberSymbolNode())
     }
+
+    stringify(...parts: BFSNode[]) {
+        return `${parts[0].toString()} < ${parts[1].toString()}`
+    }
 }
 
 export class NotOperator extends BooleanOperator {
@@ -99,6 +109,10 @@ export class NotOperator extends BooleanOperator {
     }
     createDefaultBFSNode() {
         return new BFSCompositeNode(this, new BFSBooleanSymbolNode())
+    }
+
+    stringify(...parts: BFSNode[]) {
+        return `!${parts[0].toString()}`
     }
 }
 
@@ -135,10 +149,14 @@ export class IfThenElseOperator implements Operator {
     createDefaultBFSNode(): BFSNode {
         return new BFSCompositeNode(this, new BFSBooleanSymbolNode(), new BFSNumberSymbolNode(), new BFSNumberSymbolNode())
     }
+
+    stringify(...parts: BFSNode[]) {
+        return `${parts[0].toString()} ? ${parts[1].toString()} : ${parts[2].toString()}`
+    }
 }
 
 export abstract class ArithmeticOperator implements Operator {
-    
+
     acceptsOperand(operand: Node) {
         return operand instanceof VarNode ||
             operand instanceof NumNode ||
@@ -173,6 +191,7 @@ export abstract class ArithmeticOperator implements Operator {
 
     abstract evaluate(values: number[]): number
     abstract createNode(...components: Node[]): Node
+    abstract stringify(...parts: BFSNode[]) :string
     createDefaultBFSNode() {
         return new BFSCompositeNode(this, new BFSNumberSymbolNode(), new BFSNumberSymbolNode())
     }
@@ -186,6 +205,10 @@ export class PlusOperator extends ArithmeticOperator {
     evaluate(values: number[]): number {
         return values[0] + values[1]
     }
+
+    stringify(...parts: BFSNode[]) {
+        return `${parts[0].toString()} + ${parts[1].toString()}`
+    }
 }
 
 export class TimesOperator extends ArithmeticOperator {
@@ -195,5 +218,9 @@ export class TimesOperator extends ArithmeticOperator {
 
     evaluate(values: number[]): number {
         return values[0] * values[1]
+    }
+
+    stringify(...parts: BFSNode[]) {
+        return `${parts[0].toString()} * ${parts[1].toString()}`
     }
 }

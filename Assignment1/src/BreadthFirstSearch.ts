@@ -1,5 +1,5 @@
 import { Grammar } from "./Grammar";
-import { Node } from "./Node";
+import { Env, Node } from "./Node";
 import { Operator } from "./Operator";
 
 export class BreadthFirstSearch {
@@ -43,6 +43,9 @@ export class BFSCompositeNode implements BFSNode {
         const partClones = this.parts.map(p => p.clone())
         return new BFSCompositeNode(this.operator, ...partClones)
     }
+    toString() {
+        return this.operator.stringify(...this.parts)
+    }
 }
 
 export class BFSBooleanSymbolNode implements BFSNode {
@@ -50,12 +53,14 @@ export class BFSBooleanSymbolNode implements BFSNode {
         return grammar.booleanOperations.map(op => op.createDefaultBFSNode())
     }
     isTerminal(): boolean {
-        return true
+        return false
     }
     clone(): BFSNode {
         return new BFSBooleanSymbolNode()
     }
-
+    toString() {
+        return 'B'
+    }
 }
 
 export class BFSNumberSymbolNode implements BFSNode {
@@ -68,8 +73,8 @@ export class BFSNumberSymbolNode implements BFSNode {
     }
 
     children(grammar: Grammar): BFSNode[] {
-        const valueChildren = grammar.values.map(v => new BFSValueNode())
-        const variableChildren = grammar.variables.map(v => new BFSVariableNode())
+        const valueChildren = grammar.values.map(v => new BFSValueNode(v))
+        const variableChildren = grammar.variables.map(v => new BFSVariableNode(v))
         const symbolChildren = grammar.integerOperations.map(op => op.createDefaultBFSNode())
         return [].concat(valueChildren, variableChildren, symbolChildren)
     }
@@ -77,9 +82,15 @@ export class BFSNumberSymbolNode implements BFSNode {
     clone() {
         return new BFSNumberSymbolNode()
     }
+
+    toString() {
+        return 'S'
+    }
 }
 
 export class BFSValueNode implements BFSNode {
+    constructor(public value: number) { }
+
     children(grammar: Grammar): BFSNode[] {
         return []
     }
@@ -89,19 +100,30 @@ export class BFSValueNode implements BFSNode {
     }
 
     clone() {
-        return new BFSValueNode()
+        return new BFSValueNode(this.value)
+    }
+
+    toString() {
+        return this.value + ''
     }
 }
 
 export class BFSVariableNode implements BFSNode {
+    constructor(public variable: string) { }
+
     children(grammar: Grammar): BFSNode[] {
         return []
     }
+
     isTerminal(): boolean {
         return true
     }
 
     clone() {
-        return new BFSVariableNode()
+        return new BFSVariableNode(this.variable)
+    }
+
+    toString() {
+        return this.variable
     }
 }
