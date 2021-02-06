@@ -2,6 +2,8 @@ import { Grammar } from "./Grammar"
 import { Node } from "./Node"
 
 export class BottomUpSearch {
+    public programsGenerated = 0
+    public programsEvaluated = 0
     constructor(
         public bound: number, 
         public grammar: Grammar
@@ -27,7 +29,8 @@ export class BottomUpSearch {
         }
     }
 
-    synthesize(): Node {
+    synthesize(): SearchResult {
+        const startTime = Date.now()
         let outputCache = new Set<string>()
         let plist = this.grammar.initialPrograms.concat()
         let evaluatedCount = 0
@@ -35,11 +38,23 @@ export class BottomUpSearch {
             this.grow(plist, this.grammar, outputCache)
             for (; evaluatedCount < plist.length; evaluatedCount++) {
                 if (this.grammar.isCorrect(plist[evaluatedCount])) {
-                    return plist[evaluatedCount]
+                    return {
+                        program: plist[evaluatedCount],
+                        programsEvaluated: evaluatedCount,
+                        programsGenerated: plist.length,
+                        executionDurationMs: Date.now() - startTime
+                    }
                 }
             }
         }
 
         return null
     }
+}
+
+export interface SearchResult {
+    program: Node
+    programsEvaluated: number
+    programsGenerated: number
+    executionDurationMs: number
 }
