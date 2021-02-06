@@ -1,7 +1,21 @@
 import { BottomUpSearch } from "./BottomUpSearch";
-import { BFSNumberSymbolNode, BFSValueNode } from "./BreadthFirstSearch";
+import { BFSCompositeNode, BFSNumberSymbolNode, BFSValueNode, BFSVariableNode, BreadthFirstSearch } from "./BreadthFirstSearch";
 import { Grammar } from "./Grammar";
+import { VarNode } from "./Node";
 import { AndOperator, IfThenElseOperator, LessThanOperator, NotOperator, Operator, PlusOperator, TimesOperator } from './Operator';
+
+const grammarSimple = new Grammar(
+    "gs",
+    [new LessThanOperator],
+    [new IfThenElseOperator],
+    [1, 0],
+    ['x'],
+    [
+        { 'x': 0, 'y': 10, 'out': 0 },
+        { 'x': 10, 'y': 5, 'out': 1 },
+        { 'x': 4, 'y': 3, 'out': 1 }
+    ]
+) // 1<x?1:0
 
 const grammar1 = new Grammar(
     "grammar 1",
@@ -80,10 +94,24 @@ function runBus(grammar: Grammar) {
 //runBus(grammar3)
 
 function testChildren() {
-    const numSym = new BFSNumberSymbolNode()
+    const numSym = new BFSCompositeNode(grammar1.booleanOperations[0], new BFSVariableNode('x'), new BFSNumberSymbolNode())
+    console.log(numSym.toString())
     const children = numSym.children(grammar1)
-    const grandChildren = children[4].children(grammar1)
-    console.log(grandChildren)
+    for (const child of children) {
+        console.log(`  ${child.toString()}`)
+    }
 }
 
-testChildren()
+// testChildren()
+
+
+function runBFS(grammar: Grammar) {
+    const bfs = new BreadthFirstSearch(grammar)
+    const program = bfs.synthesize()
+    console.log(program.toString())
+}
+
+//runBFS(grammarSimple)
+runBFS(grammar1)
+runBFS(grammar2)
+runBFS(grammar3)

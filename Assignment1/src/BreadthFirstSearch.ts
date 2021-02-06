@@ -1,42 +1,57 @@
 import { Grammar } from "./Grammar";
-import { Env, Node } from "./Node";
+import { Env } from "./Node";
 import { Operator } from "./Operator";
 
 export class BreadthFirstSearch {
-    synthesize(grammar: Grammar): Node {
-        return null
+    constructor(private grammar: Grammar) {
+
+    }
+    synthesize(): BFSNode {
+        const openList: BFSNode[] = [new BFSNumberSymbolNode()]
+        while (openList.length) {
+            const p = openList.shift()
+            const children = p.children(this.grammar)
+            for (const child of children) {
+                if (child.isTerminal() && this.grammar.isBFSCorrect(child)) {
+                    return child
+                }
+                if (!child.isTerminal()) // optimize
+                    openList.push(child)
+            }
+        }
     }
 }
 
 export interface BFSNode {
+    interpret(env: Env): number
     children(grammar: Grammar): BFSNode[]
     isTerminal(): boolean
     clone(): BFSNode
 }
 
 export class BFSCompositeNode implements BFSNode {
-    private firstSymbolIndex: number
     private parts: BFSNode[]
     constructor(private operator: Operator, ...parts: BFSNode[]) {
         this.parts = parts
-        this.firstSymbolIndex = this.parts.findIndex(p => !p.isTerminal())
     }
 
     children(grammar: Grammar): BFSNode[] {
-        if (this.firstSymbolIndex < 0)
+        if (this.isTerminal())
             return []
-        const replacements = this.parts[this.firstSymbolIndex].children(grammar)
+        
+        const nonTerminalIndex = this.parts.findIndex(p => !p.isTerminal())
+        const replacements = this.parts[nonTerminalIndex].children(grammar)
         const children = []
         for (const replacement of replacements) {
             const child = this.clone() as BFSCompositeNode
-            child.parts[this.firstSymbolIndex] = replacement
+            child.parts[nonTerminalIndex] = replacement.clone()
             children.push(child)
         }
         return children
     }
 
     isTerminal() {
-        return !!this.firstSymbolIndex
+        return this.parts.every(p => p.isTerminal())
     }
 
     clone() {
@@ -45,6 +60,9 @@ export class BFSCompositeNode implements BFSNode {
     }
     toString() {
         return this.operator.stringify(...this.parts)
+    }
+    interpret(env: Env) {
+        return this.operator.evaluate(this.parts.map(p => p.interpret(env)))
     }
 }
 
@@ -60,6 +78,9 @@ export class BFSBooleanSymbolNode implements BFSNode {
     }
     toString() {
         return 'B'
+    }
+    interpret(env: Env): number {
+        throw 'cannot interpret'
     }
 }
 
@@ -86,6 +107,10 @@ export class BFSNumberSymbolNode implements BFSNode {
     toString() {
         return 'S'
     }
+
+    interpret(env: Env): number {
+        throw 'cannot interpret'
+    }
 }
 
 export class BFSValueNode implements BFSNode {
@@ -106,6 +131,10 @@ export class BFSValueNode implements BFSNode {
     toString() {
         return this.value + ''
     }
+
+    interpret(env: Env): number {
+        return this.value
+    }
 }
 
 export class BFSVariableNode implements BFSNode {
@@ -125,5 +154,8 @@ export class BFSVariableNode implements BFSNode {
 
     toString() {
         return this.variable
+    }
+    interpret(env: Env): number {
+        return env[this.variable]
     }
 }

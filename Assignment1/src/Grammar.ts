@@ -1,7 +1,9 @@
 import { BooleanOperator, Operator } from "./Operator";
 import { Env, Node, NumNode, VarNode } from "./Node";
+import { BFSNode } from "./BreadthFirstSearch";
 
 export class Grammar {
+    
     
     allOperations: Operator[];
     initialPrograms: Node[];
@@ -17,6 +19,10 @@ export class Grammar {
     }
 
     isCorrect(program: Node): boolean {
+        return this.inputOutput.every(env => program.interpret(env) === env.out)
+    }
+
+    isBFSCorrect(program: BFSNode): boolean {
         return this.inputOutput.every(env => program.interpret(env) === env.out)
     }
 }

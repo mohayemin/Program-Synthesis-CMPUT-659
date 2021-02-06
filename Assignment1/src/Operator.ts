@@ -61,7 +61,7 @@ export class AndOperator extends BooleanOperator {
     }
 
     stringify(...parts: BFSNode[]) {
-        return `${parts[0].toString()} && ${parts[1].toString()}`
+        return `(${parts[0].toString()} && ${parts[1].toString()})`
     }
 }
 
@@ -90,7 +90,7 @@ export class LessThanOperator extends BooleanOperator {
     }
 
     stringify(...parts: BFSNode[]) {
-        return `${parts[0].toString()} < ${parts[1].toString()}`
+        return `(${parts[0].toString()} < ${parts[1].toString()})`
     }
 }
 
@@ -151,7 +151,7 @@ export class IfThenElseOperator implements Operator {
     }
 
     stringify(...parts: BFSNode[]) {
-        return `${parts[0].toString()} ? ${parts[1].toString()} : ${parts[2].toString()}`
+        return `(${parts[0].toString()} ? ${parts[1].toString()} : ${parts[2].toString()})`
     }
 }
 
@@ -207,7 +207,7 @@ export class PlusOperator extends ArithmeticOperator {
     }
 
     stringify(...parts: BFSNode[]) {
-        return `${parts[0].toString()} + ${parts[1].toString()}`
+        return `(${parts[0].toString()} + ${parts[1].toString()})`
     }
 }
 
@@ -221,6 +221,6 @@ export class TimesOperator extends ArithmeticOperator {
     }
 
     stringify(...parts: BFSNode[]) {
-        return `${parts[0].toString()} * ${parts[1].toString()}`
+        return `(${parts[0].toString()} * ${parts[1].toString()})`
     }
 }
