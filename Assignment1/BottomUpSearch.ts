@@ -2,6 +2,11 @@ import { Grammar } from "./Grammar"
 import { Node } from "./Node"
 
 export class BottomUpSearch {
+    constructor(
+        public bound: number, 
+        public grammar: Grammar
+    ) {
+    }
     normalizeOutput(out: number[]) {
         return out.join('|')
     }
@@ -22,14 +27,14 @@ export class BottomUpSearch {
         }
     }
 
-    synthesize(bound: number, grammar: Grammar): Node {
+    synthesize(): Node {
         let outputCache = new Set<string>()
-        let plist = grammar.initialPrograms.concat()
+        let plist = this.grammar.initialPrograms.concat()
         let evaluatedCount = 0
-        for (let i = 0; i < bound; i++) {
-            this.grow(plist, grammar, outputCache)
+        for (let i = 0; i < this.bound; i++) {
+            this.grow(plist, this.grammar, outputCache)
             for (; evaluatedCount < plist.length; evaluatedCount++) {
-                if (grammar.isCorrect(plist[evaluatedCount])) {
+                if (this.grammar.isCorrect(plist[evaluatedCount])) {
                     return plist[evaluatedCount]
                 }
             }

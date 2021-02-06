@@ -65,11 +65,11 @@ function testGrow(operator: Operator, grammer: Grammar) {
 function runBus(grammar: Grammar) {
     console.log(`=== ${grammar.name} ===`)
     console.log(`BUS started at ${new Date().toTimeString()}`)
-    console.time(grammar.name)
-    const bus = new BottomUpSearch()
-    const out = bus.synthesize(3, grammar)
+    console.time(`BUS ${grammar.name}`)
+    const bus = new BottomUpSearch(3, grammar)
+    const out = bus.synthesize()
     console.log(`Result: ${out.toString()}` )
-    console.timeLog(grammar.name)
+    console.timeLog(`BUS ${grammar.name}`)
     console.log()
 }
 

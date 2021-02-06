@@ -1,7 +1,9 @@
+import { BFSNode } from "./BreadthFirstSearch";
 import { Grammar } from "./Grammar";
 import { AndNode, BooleanNode, IfElseNode, LessThanNode, Node, NotNode, NumNode, PlusNode, TimesNode, VarNode } from "./Node";
 
 export interface Operator {
+    expand(bfsNode: BFSNode, grammar: Grammar): BFSNode[]
     accepts(...operands: Node[]): boolean
     grow(plist: Node[], grammar: Grammar): Node[]
     createNode(...components: Node[]): Node
@@ -10,7 +12,7 @@ export interface Operator {
 export abstract class BooleanOperator implements Operator {
     constructor(private operandCount: number) {
     }
-
+    
     accepts(...operands: Node[]): boolean {
         return operands.length === this.operandCount &&
             operands.every(o => this.acceptsOperand(o))
@@ -29,6 +31,7 @@ export abstract class BooleanOperator implements Operator {
 
         return outPList
     }
+    abstract expand(bfsNode: BFSNode, grammar: Grammar): BFSNode[]
 }
 
 export class AndOperator extends BooleanOperator {
@@ -42,6 +45,10 @@ export class AndOperator extends BooleanOperator {
 
     createNode(...nodes: Node[]): Node {
         return new AndNode(nodes[0] as BooleanNode, nodes[1] as BooleanNode)
+    }
+
+    expand(bfsNode: BFSNode, grammar: Grammar): BFSNode[] {
+        throw new Error("Method not implemented.");
     }
 }
 
@@ -60,9 +67,16 @@ export class LessThanOperator extends BooleanOperator {
     createNode(...children: Node[]): Node {
         return new LessThanNode(children[0], children[1])
     }
+
+    expand(bfsNode: BFSNode, grammar: Grammar): BFSNode[] {
+        throw new Error("Method not implemented.");
+    }
 }
 
 export class NotOperator extends BooleanOperator {
+    expand(bfsNode: any, grammar: Grammar): any[] {
+        throw new Error("Method not implemented.");
+    }
     constructor() {
         super(1);
     }
@@ -75,6 +89,9 @@ export class NotOperator extends BooleanOperator {
 }
 
 export class IfThenElseOperator implements Operator {
+    expand(bfsNode: any, grammar: Grammar): any[] {
+        throw new Error("Method not implemented.");
+    }
     grow(plist: Node[], grammar: Grammar): Node[] {
         const newPrograms: Node[] = [];
         for (const bo of grammar.booleanOperations) {
@@ -104,6 +121,9 @@ export class IfThenElseOperator implements Operator {
 }
 
 export abstract class ArithmeticOperator implements Operator {
+    expand(bfsNode: any, grammar: Grammar): any[] {
+        throw new Error("Method not implemented.");
+    }
     acceptsOperand(operand: Node) {
         return operand instanceof VarNode ||
             operand instanceof NumNode ||
