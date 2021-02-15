@@ -32,8 +32,16 @@ const grammar1 = new Grammar(
 
 const grammar2 = new Grammar(
     "grammar 2",
-    [new AndOperator, new LessThanOperator, new NotOperator],
-    [new PlusOperator, new TimesOperator, new IfThenElseOperator],
+    [
+        new AndOperator
+        , new LessThanOperator
+    //    , new NotOperator
+    ],
+    [
+        new IfThenElseOperator
+    //    , new PlusOperator
+    //    , new TimesOperator
+    ],
     [10],
     ['x', 'y'],
     [
@@ -102,16 +110,16 @@ function testChildren() {
     }
 }
 
-// testChildren()
+testChildren()
 
 
 function runBFS(grammar: Grammar) {
     const bfs = new BreadthFirstSearch(grammar)
     const program = bfs.synthesize()
-    console.log(program.toString())
+    console.log('found it: ' + program.toString())
 }
 
 //runBFS(grammarSimple)
-runBFS(grammar1)
-runBFS(grammar2)
-runBFS(grammar3)
+// runBFS(grammar1)
+// runBFS(grammar2)
+//runBFS(grammar3)

@@ -12,17 +12,20 @@ export class BreadthFirstSearch {
             const p = openList.shift()
             const children = p.children(this.grammar)
             for (const child of children) {
-                if (child.isTerminal() && this.grammar.isBFSCorrect(child)) {
-                    return child
-                }
-                if (!child.isTerminal()) // optimize
+                if (child.isTerminal()) {
+                    console.log(child.toString())
+                    if (this.grammar.isBFSCorrect(child))
+                        return child
+                } else {
                     openList.push(child)
+                }
             }
         }
     }
 }
 
 export interface BFSNode {
+    size(): number;
     interpret(env: Env): number
     children(grammar: Grammar): BFSNode[]
     isTerminal(): boolean
@@ -38,7 +41,7 @@ export class BFSCompositeNode implements BFSNode {
     children(grammar: Grammar): BFSNode[] {
         if (this.isTerminal())
             return []
-        
+
         const nonTerminalIndex = this.parts.findIndex(p => !p.isTerminal())
         const replacements = this.parts[nonTerminalIndex].children(grammar)
         const children = []
@@ -64,6 +67,9 @@ export class BFSCompositeNode implements BFSNode {
     interpret(env: Env) {
         return this.operator.evaluate(this.parts.map(p => p.interpret(env)))
     }
+    size() {
+        return this.parts.reduce((sum, p) => sum + p.size(), 0)
+    }
 }
 
 export class BFSBooleanSymbolNode implements BFSNode {
@@ -81,6 +87,9 @@ export class BFSBooleanSymbolNode implements BFSNode {
     }
     interpret(env: Env): number {
         throw 'cannot interpret'
+    }
+    size() {
+        return 1
     }
 }
 
@@ -111,6 +120,9 @@ export class BFSNumberSymbolNode implements BFSNode {
     interpret(env: Env): number {
         throw 'cannot interpret'
     }
+    size() {
+        return 1
+    }
 }
 
 export class BFSValueNode implements BFSNode {
@@ -135,6 +147,9 @@ export class BFSValueNode implements BFSNode {
     interpret(env: Env): number {
         return this.value
     }
+    size() {
+        return 1
+    }
 }
 
 export class BFSVariableNode implements BFSNode {
@@ -157,5 +172,8 @@ export class BFSVariableNode implements BFSNode {
     }
     interpret(env: Env): number {
         return env[this.variable]
+    }
+    size() {
+        return 1
     }
 }
