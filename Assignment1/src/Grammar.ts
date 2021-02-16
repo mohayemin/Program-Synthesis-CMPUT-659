@@ -13,7 +13,8 @@ export class Grammar {
         public integerOperations: Operator[],
         public values: number[],
         public variables: string[],
-        public inputOutput: Env[]) {
+        public inputOutput: Env[],
+        public maxSize: number = Number.MAX_SAFE_INTEGER) {
         this.allOperations = this.integerOperations.concat(this.booleanOperations)
         this.initialPrograms = [].concat(values.map(v => new NumNode(v))).concat(variables.map(v => new VarNode(v)))
     }

@@ -61,7 +61,7 @@ export class AndOperator extends BooleanOperator {
     }
 
     stringify(...parts: BFSNode[]) {
-        return `(${parts[0].toString()} && ${parts[1].toString()})`
+        return `(${parts[0].toString()} & ${parts[1].toString()})`
     }
 }
 

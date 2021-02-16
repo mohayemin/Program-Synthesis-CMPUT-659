@@ -7,29 +7,39 @@ export class BreadthFirstSearch {
 
     }
     synthesize(): BFSNode {
-        const openList: BFSNode[] = [new BFSNumberSymbolNode()]
+        const start = new BFSNumberSymbolNode()
+        start['wbs'] = '1'
+        const openList: BFSNode[] = [start]
         while (openList.length) {
-            const p = openList.shift()
-            const children = p.children(this.grammar)
-            for (const child of children) {
-                if (child.isTerminal()) {
-                    console.log(child.toString())
-                    if (this.grammar.isBFSCorrect(child))
-                        return child
-                } else {
-                    openList.push(child)
-                }
+            //console.log(openList.join(','))
+            const prog = openList.shift()
+            console.log(prog['wbs'] + ' ' + prog.toString())
+            if (prog.isTerminal()) {
+                if (this.grammar.isBFSCorrect(prog))
+                    return prog
+            }
+            if (prog.size() > this.grammar.maxSize)
+                continue
+
+            const children = prog.children(this.grammar)
+            for (let i = 0; i < children.length; i++) {
+                const child = children[i];
+                child['wbs'] = `${prog['wbs']}.${i + 1}`
+                openList.push(child)
             }
         }
+
+        return null
     }
 }
 
 export interface BFSNode {
-    size(): number;
+    size(): number
     interpret(env: Env): number
     children(grammar: Grammar): BFSNode[]
     isTerminal(): boolean
     clone(): BFSNode
+    toString(): string
 }
 
 export class BFSCompositeNode implements BFSNode {
