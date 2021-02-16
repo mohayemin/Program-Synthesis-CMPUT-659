@@ -76,8 +76,8 @@ const sampleGrammar2 = new Grammar(
 
 const sampleGrammar3 = new Grammar(
     "sample 3",
-    [new AndOperator, new LessThanOperator],
-    [new PlusOperator, new TimesOperator, new IfThenElseOperator],
+    [new LessThanOperator, new AndOperator],
+    [new IfThenElseOperator, new PlusOperator, new TimesOperator],
     [-1],
     ['x', 'y'],
     [
@@ -87,7 +87,7 @@ const sampleGrammar3 = new Grammar(
         { 'x': 1, 'y': -7, 'out': -6 },
         { 'x': 1, 'y': 8, 'out': -8 }
     ],
-    //6
+    6
 )
 
 function runBUS(grammar: Grammar) {
@@ -116,11 +116,11 @@ function printResult(result: SearchResult) {
 }
 
 [
-    // customGrammar1,
-    // customGrammar2,
-    // customGrammar3,
-    // sampleGrammar1,
-    //sampleGrammar2,
+    customGrammar1,
+    customGrammar2,
+    customGrammar3,
+    sampleGrammar1,
+    sampleGrammar2,
     sampleGrammar3,    
 ].forEach(grammar => {
     runBUS(grammar)

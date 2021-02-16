@@ -20,10 +20,8 @@ export class BreadthFirstSearch {
         while (openList.length) {
             //console.log(openList.join(','))
             const program = openList.shift()
-            if (program.size() > this.grammar.maxSize)
-                continue
-
-            console.log(program['wbs'] + ' ' + program.toString())
+            
+            //console.log(program['wbs'] + ' ' + program.toString())
             if (program.isTerminal()) {
                 programsEvaluated++
                 if (this.grammar.isBFSCorrect(program)) {
@@ -37,6 +35,7 @@ export class BreadthFirstSearch {
             }
 
             const children = program.children(this.grammar)
+                .filter(p => p.size() <= this.grammar.maxSize)
             for (let i = 0; i < children.length; i++) {
                 const child = children[i];
                 child['wbs'] = `${program['wbs']}.${i + 1}`
@@ -45,7 +44,7 @@ export class BreadthFirstSearch {
             programsGenerated += children.length
 
             if (programsGenerated >= nextLogCount) {
-                console.log(`Generated ${Math.floor(programsGenerated/1000)}K programs and running...`)
+                console.log(`Generated ${Math.floor(programsGenerated / 1000)}K programs and running...`)
                 nextLogCount += 100000
             }
         }
@@ -137,7 +136,7 @@ export class BFSNumberSymbolNode implements BFSNode {
         const valueChildren = grammar.values.map(v => new BFSValueNode(v))
         const variableChildren = grammar.variables.map(v => new BFSVariableNode(v))
         const symbolChildren = grammar.integerOperations.map(op => op.createDefaultBFSNode())
-        return [].concat(valueChildren, variableChildren, symbolChildren)
+        return [].concat(symbolChildren, variableChildren, valueChildren)
     }
 
     clone() {
