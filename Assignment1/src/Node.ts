@@ -24,7 +24,7 @@ export class NotNode extends BooleanNode {
     }
 
     toString() {
-        return 'not (' + this.left + ')'
+        return '!' + this.left
     }
 
     interpretBool(env: Env) {
@@ -37,7 +37,7 @@ export class AndNode extends BooleanNode {
     }
 
     toString() {
-        return "(" + this.left.toString() + " and " + this.right.toString() + ")"
+        return `(${this.left.toString()} & ${this.right.toString()})`
     }
 
     interpretBool(env: Env) {
@@ -51,7 +51,7 @@ export class LessThanNode extends BooleanNode {
     }
 
     toString() {
-        return "(" + this.left.toString() + " < " + this.right.toString() + ")"
+        return `(${this.left.toString()} < ${this.right.toString()})`
     }
 
     interpretBool(env: Env) {
@@ -68,7 +68,7 @@ export class IfElseNode extends Node {
     }
 
     toString() {
-        return "(if" + this.condition.toString() + " then " + this.true_case.toString() + " else " + this.false_case.toString() + ")"
+        return `(${this.condition.toString()} ? ${this.true_case.toString()} : ${this.false_case.toString()})`
     }
 
     interpret(env: Env) {

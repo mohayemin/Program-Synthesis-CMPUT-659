@@ -1,31 +1,52 @@
 import { Grammar } from "./Grammar";
 import { Env } from "./Node";
 import { Operator } from "./Operator";
+import { SearchResult } from "./SearchResult";
 
 export class BreadthFirstSearch {
     constructor(private grammar: Grammar) {
 
     }
-    synthesize(): BFSNode {
+    synthesize(): SearchResult {
+        const startTime = Date.now()
+        let nextLogCount = 100000
+
+        let programsEvaluated = 0
+        let programsGenerated = 1
         const start = new BFSNumberSymbolNode()
         start['wbs'] = '1'
         const openList: BFSNode[] = [start]
+
         while (openList.length) {
             //console.log(openList.join(','))
-            const prog = openList.shift()
-            console.log(prog['wbs'] + ' ' + prog.toString())
-            if (prog.isTerminal()) {
-                if (this.grammar.isBFSCorrect(prog))
-                    return prog
-            }
-            if (prog.size() > this.grammar.maxSize)
+            const program = openList.shift()
+            if (program.size() > this.grammar.maxSize)
                 continue
 
-            const children = prog.children(this.grammar)
+            // console.log(prog['wbs'] + ' ' + prog.toString())
+            if (program.isTerminal()) {
+                programsEvaluated++
+                if (this.grammar.isBFSCorrect(program)) {
+                    return {
+                        program,
+                        programsEvaluated,
+                        programsGenerated,
+                        executionDurationMs: Date.now() - startTime
+                    }
+                }
+            }
+
+            const children = program.children(this.grammar)
             for (let i = 0; i < children.length; i++) {
                 const child = children[i];
-                child['wbs'] = `${prog['wbs']}.${i + 1}`
+                child['wbs'] = `${program['wbs']}.${i + 1}`
                 openList.push(child)
+            }
+            programsGenerated += children.length
+
+            if (programsGenerated >= nextLogCount) {
+                console.log(`Generated ${Math.floor(programsGenerated/1000)}K programs and running...`)
+                nextLogCount += 100000
             }
         }
 

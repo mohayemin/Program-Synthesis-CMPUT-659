@@ -1,5 +1,6 @@
 import { Grammar } from "./Grammar"
 import { Node } from "./Node"
+import { SearchResult } from "./SearchResult"
 
 export class BottomUpSearch {
     public programsGenerated = 0
@@ -52,9 +53,3 @@ export class BottomUpSearch {
     }
 }
 
-export interface SearchResult {
-    program: Node
-    programsEvaluated: number
-    programsGenerated: number
-    executionDurationMs: number
-}

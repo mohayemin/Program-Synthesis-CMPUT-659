@@ -1,12 +1,48 @@
 import { BottomUpSearch } from "./BottomUpSearch";
 import { BreadthFirstSearch } from "./BreadthFirstSearch";
 import { Grammar } from "./Grammar";
-import { IfThenElseOperator, LessThanOperator } from './Operator';
+import { AndOperator, IfThenElseOperator, LessThanOperator, PlusOperator, TimesOperator } from './Operator';
+import { SearchResult } from "./SearchResult";
 
+const customGrammar1 = new Grammar(
+    "custom 1",
+    [new LessThanOperator],
+    [new IfThenElseOperator],
+    [1, 0],
+    ['x'],
+    [
+        { 'x': 0, 'y': 10, 'out': 0 },
+        { 'x': 10, 'y': 5, 'out': 1 },
+        { 'x': 4, 'y': 3, 'out': 1 }
+    ]
+)
 
+const customGrammar2 = new Grammar(
+    "custom 2",
+    [],
+    [new PlusOperator],
+    [1],
+    ['x', 'y'],
+    [
+        { x: 1, y: 0, out: 2 },
+        { x: 1, y: 1, out: 3 }
+    ]
+)
 
-const grammar1 = new Grammar(
-    "grammar 1",
+const customGrammar3 = new Grammar(
+    "custom 3",
+    [],
+    [new PlusOperator],
+    [],
+    ['x', 'y'],
+    [
+        { x: 0, y: 1, out: 1 },
+        { x: 1, y: 2, out: 3 }
+    ]
+)
+
+const sampleGrammar1 = new Grammar(
+    "sample 1",
     [new LessThanOperator],
     [new IfThenElseOperator],
     [1, 2],
@@ -18,21 +54,58 @@ const grammar1 = new Grammar(
     ]
 )
 
-// Arthur:  (if ((y < 10) and (10 < (y * y))) then y else x)
-// Moha: (if((x < 10) and (y < x)) then x else (if(y < 10) then y else x))
+const sampleGrammar2 = new Grammar(
+    "sample 2",
+    [
+        new AndOperator
+        , new LessThanOperator
+    ],
+    [
+        new IfThenElseOperator
+    ],
+    [10],
+    ['x', 'y'],
+    [
+        { 'x': 5, 'y': 10, 'out': 5 },
+        { 'x': 10, 'y': 5, 'out': 5 },
+        { 'x': 4, 'y': 3, 'out': 4 }, { 'x': 3, 'y': 4, 'out': 4 }
+    ],
+    8
+)
 
-// Arthur:    (if (x < y) then (y * -1) else (y + x))
-// Mohayemin: (if((y < x) and (y < x)) then (x + y) else (-1 * y))
+const sampleGrammar3 = new Grammar(
+    "sample 3",
+    [new AndOperator, new LessThanOperator],
+    [new PlusOperator, new TimesOperator, new IfThenElseOperator],
+    [-1],
+    ['x', 'y'],
+    [
+        { 'x': 10, 'y': 7, 'out': 17 },
+        { 'x': 4, 'y': 7, 'out': -7 },
+        { 'x': 10, 'y': 3, 'out': 13 },
+        { 'x': 1, 'y': -7, 'out': -6 },
+        { 'x': 1, 'y': 8, 'out': -8 }
+    ],
+    6
+)
 
-
-// testGrow(grammar1.integerOperations[0], grammar1)
-// testGrow(grammar1.booleanOperations[0], grammar1)
-// testGrow(grammar2.integerOperations[0], grammar2)
-
-function runBus(grammar: Grammar) {
+function runBUS(grammar: Grammar) {
     console.log(`=== ${grammar.name} ===`)
+    console.log(`* Algorithm: BUS`)
     const bus = new BottomUpSearch(3, grammar)
     const result = bus.synthesize()
+    printResult(result)
+}
+
+function runBFS(grammar: Grammar) {
+    console.log(`=== ${grammar.name} ===`)
+    console.log(`* Algorithm: BFS`)
+    const bfs = new BreadthFirstSearch(grammar)
+    const result = bfs.synthesize()
+    printResult(result)
+}
+
+function printResult(result: SearchResult) {
     console.log(`* Program: ${result.program.toString()}`)
     console.log(`* Execution time: ${result.executionDurationMs}ms`)
     console.log(`* Programs generated: ${result.programsGenerated}`)
@@ -41,27 +114,14 @@ function runBus(grammar: Grammar) {
     console.log()
 }
 
-//runBus(grammar1)
-//runBus(grammar2)
-//runBus(grammar3)
-
-
-
-
-
-// testFirstChild(grammar2.integerOperations[0].createDefaultBFSNode(), grammar2)
-
-function runBFS(grammar: Grammar) {
-    const bfs = new BreadthFirstSearch(grammar)
-    const program = bfs.synthesize()
-    console.log('found it: ' + program.toString())
-}
-
-// runBFS(grammarSimple2)
-//runBFS(grammarSimple)
-runBus(grammar1)
-runBFS(grammar1)
-// runBFS(grammar2) // 1.4.1.2.2.1.2.1.5.2.2.2
-// runBFS(grammar3)
-
-// runBus(grammar2)
+[
+    // customGrammar1,
+    // customGrammar2,
+    // customGrammar3,
+    // sampleGrammar1,
+    sampleGrammar2,
+    //sampleGrammar3,    
+].forEach(grammar => {
+   // runBUS(grammar)
+    runBFS(grammar)
+})
