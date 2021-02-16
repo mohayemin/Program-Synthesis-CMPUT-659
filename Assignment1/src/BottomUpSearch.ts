@@ -1,3 +1,4 @@
+import { performance } from "perf_hooks"
 import { Grammar } from "./Grammar"
 import { Node } from "./Node"
 import { SearchResult } from "./SearchResult"
@@ -31,7 +32,7 @@ export class BottomUpSearch {
     }
 
     synthesize(): SearchResult {
-        const startTime = Date.now()
+        const startTime = performance.now()
         let outputCache = new Set<string>()
         let plist = this.grammar.initialPrograms.concat()
         let evaluatedCount = 0
@@ -43,7 +44,7 @@ export class BottomUpSearch {
                         program: plist[evaluatedCount],
                         programsEvaluated: evaluatedCount,
                         programsGenerated: plist.length,
-                        executionDurationMs: Date.now() - startTime
+                        executionDurationMs: performance.now() - startTime
                     }
                 }
             }

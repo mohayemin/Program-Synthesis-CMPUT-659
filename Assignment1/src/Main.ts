@@ -48,9 +48,9 @@ const sampleGrammar1 = new Grammar(
     [1, 2],
     ['x', 'y'],
     [
-        { 'x': 5, 'y': 10, 'out': 5 },
-        { 'x': 10, 'y': 5, 'out': 5 },
-        { 'x': 4, 'y': 3, 'out': 3 }
+        { x: 5,  y: 10, out: 5 },
+        { x: 10, y: 5,  out: 5 },
+        { x: 4,  y: 3,  out: 3 }
     ]
 )
 
@@ -67,9 +67,10 @@ const sampleGrammar2 = new Grammar(
     [10],
     ['x', 'y'],
     [
-        { 'x': 5, 'y': 10, 'out': 5 },
-        { 'x': 10, 'y': 5, 'out': 5 },
-        { 'x': 4, 'y': 3, 'out': 4 }, { 'x': 3, 'y': 4, 'out': 4 }
+        { x: 5,  y: 10, out: 5 },
+        { x: 10, y: 5,  out: 5 },
+        { x: 4,  y: 3,  out: 4 }, 
+        { x: 3,  y: 4,  out: 4 }
     ],
     7
 )
@@ -81,11 +82,11 @@ const sampleGrammar3 = new Grammar(
     [-1],
     ['x', 'y'],
     [
-        { 'x': 10, 'y': 7, 'out': 17 },
-        { 'x': 4, 'y': 7, 'out': -7 },
-        { 'x': 10, 'y': 3, 'out': 13 },
-        { 'x': 1, 'y': -7, 'out': -6 },
-        { 'x': 1, 'y': 8, 'out': -8 }
+        { x: 10, y: 7, out: 17 },
+        { x: 4,  y: 7, out: -7 },
+        { x: 10, y: 3, out: 13 },
+        { x: 1,  y: -7,out: -6 },
+        { x: 1,  y: 8, out: -8 }
     ],
     6
 )

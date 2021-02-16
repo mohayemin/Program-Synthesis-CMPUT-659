@@ -1,0 +1,100 @@
+
+> assignment-1@1.0.0 start D:\PhD\PSiXAI-CMPUT-659\Assignment1
+> ts-node src/Main.ts
+
+=== custom 1 ===
+* Algorithm: BUS
+* Program: ((1 < x) ? 1 : 0)
+* Execution time: 0.5195000171661377ms
+* Programs generated: 9
+* Programs evaluated: 5 (55.56%)
+
+=== custom 1 ===
+* Algorithm: BFS
+* Program: ((x < 1) ? x : 1)
+* Execution time: 5.3087000250816345ms
+* Programs generated: 276
+* Programs evaluated: 14 (5.07%)
+
+=== custom 2 ===
+* Algorithm: BUS
+* Program: (1 + (1 + y))
+* Execution time: 0.24729996919631958ms
+* Programs generated: 15
+* Programs evaluated: 7 (46.67%)
+
+=== custom 2 ===
+* Algorithm: BFS
+* Program: ((x + x) + y)
+* Execution time: 1.0381999611854553ms
+* Programs generated: 249
+* Programs evaluated: 14 (5.62%)
+
+=== custom 3 ===
+* Algorithm: BUS
+* Program: (x + y)
+* Execution time: 0.02950000762939453ms
+* Programs generated: 5
+* Programs evaluated: 3 (60.00%)
+
+=== custom 3 ===
+* Algorithm: BFS
+* Program: (x + y)
+* Execution time: 0.0820000171661377ms
+* Programs generated: 28
+* Programs evaluated: 4 (14.29%)
+
+=== sample 1 ===
+* Algorithm: BUS
+* Program: ((x < y) ? x : y)
+* Execution time: 0.4057999849319458ms
+* Programs generated: 23
+* Programs evaluated: 18 (78.26%)
+
+=== sample 1 ===
+* Algorithm: BFS
+* Program: ((x < y) ? x : y)
+* Execution time: 2.6078999638557434ms
+* Programs generated: 624
+* Programs evaluated: 22 (3.53%)
+
+=== sample 2 ===
+* Algorithm: BUS
+* Program: (((x < 10) & (y < x)) ? x : ((y < 10) ? y : x))
+* Execution time: 140.98129999637604ms
+* Programs generated: 998
+* Programs evaluated: 103 (10.32%)
+
+=== sample 2 ===
+* Algorithm: BFS
+Generated 100K programs and running...
+Generated 200K programs and running...
+Generated 300K programs and running...
+Generated 400K programs and running...
+Generated 500K programs and running...
+Generated 600K programs and running...
+* Program: (((x < 10) & (10 < (x * x))) ? x : y)
+* Execution time: 49784.34439998865ms
+* Programs generated: 654066
+* Programs evaluated: 71510 (10.93%)
+
+=== sample 3 ===
+* Algorithm: BUS
+* Program: ((y < x) ? (x + y) : (-1 * y))
+* Execution time: 286.6341999769211ms
+* Programs generated: 2599
+* Programs evaluated: 2001 (76.99%)
+
+=== sample 3 ===
+* Algorithm: BFS
+Generated 100K programs and running...
+Generated 200K programs and running...
+Generated 300K programs and running...
+Generated 400K programs and running...
+Generated 500K programs and running...
+Generated 600K programs and running...
+* Program: ((x < y) ? (y * -1) : (x + y))
+* Execution time: 62407.982899963856ms
+* Programs generated: 678059
+* Programs evaluated: 81842 (12.07%)
+

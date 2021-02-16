@@ -1,3 +1,4 @@
+import { performance } from "perf_hooks";
 import { Grammar } from "./Grammar";
 import { Env } from "./Node";
 import { Operator } from "./Operator";
@@ -8,7 +9,7 @@ export class BreadthFirstSearch {
 
     }
     synthesize(): SearchResult {
-        const startTime = Date.now()
+        const startTime = performance.now()
         let nextLogCount = 100000
 
         let programsEvaluated = 0
@@ -29,7 +30,7 @@ export class BreadthFirstSearch {
                         program,
                         programsEvaluated,
                         programsGenerated,
-                        executionDurationMs: Date.now() - startTime
+                        executionDurationMs: performance.now() - startTime
                     }
                 }
             }
