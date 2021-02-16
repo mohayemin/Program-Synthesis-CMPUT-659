@@ -23,7 +23,7 @@ export class BreadthFirstSearch {
             if (program.size() > this.grammar.maxSize)
                 continue
 
-            // console.log(prog['wbs'] + ' ' + prog.toString())
+            console.log(program['wbs'] + ' ' + program.toString())
             if (program.isTerminal()) {
                 programsEvaluated++
                 if (this.grammar.isBFSCorrect(program)) {

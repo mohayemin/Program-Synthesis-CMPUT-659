@@ -61,7 +61,8 @@ const sampleGrammar2 = new Grammar(
         , new LessThanOperator
     ],
     [
-        new IfThenElseOperator
+        new IfThenElseOperator,
+        new TimesOperator
     ],
     [10],
     ['x', 'y'],
@@ -70,7 +71,7 @@ const sampleGrammar2 = new Grammar(
         { 'x': 10, 'y': 5, 'out': 5 },
         { 'x': 4, 'y': 3, 'out': 4 }, { 'x': 3, 'y': 4, 'out': 4 }
     ],
-    8
+    7
 )
 
 const sampleGrammar3 = new Grammar(
@@ -86,7 +87,7 @@ const sampleGrammar3 = new Grammar(
         { 'x': 1, 'y': -7, 'out': -6 },
         { 'x': 1, 'y': 8, 'out': -8 }
     ],
-    6
+    //6
 )
 
 function runBUS(grammar: Grammar) {
@@ -119,9 +120,9 @@ function printResult(result: SearchResult) {
     // customGrammar2,
     // customGrammar3,
     // sampleGrammar1,
-    sampleGrammar2,
-    //sampleGrammar3,    
+    //sampleGrammar2,
+    sampleGrammar3,    
 ].forEach(grammar => {
-   // runBUS(grammar)
+    runBUS(grammar)
     runBFS(grammar)
 })
