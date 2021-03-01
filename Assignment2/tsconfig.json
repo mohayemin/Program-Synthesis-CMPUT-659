@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "outDir": "./build/",
+        "target": "es2019",
+        "module": "CommonJS",
+        "lib": [
+            "es2019"
+        ],
+        "sourceMap": true
+    },
+    "exclude": [
+        "node_modules",
+        "build",
+        "sample-input",
+        ".vscode",
+        "test"
+    ]
+}
