@@ -1,12 +1,10 @@
-export type Env = { [name: string]: string }
-
 export abstract class Node {
     size: number
     getSize() {
         return this.size
     }
     abstract toString(): string
-    abstract interpret(env: Env): string
+    abstract interpret(input: string): string
 }
 
 export class Str extends Node {
@@ -17,20 +15,20 @@ export class Str extends Node {
     toString() {
         return `'${this.value}'`
     }
-    interpret(env: Env) {
+    interpret(input: string) {
         return this.value
     }
 }
 
-export class Var extends Node {
-    constructor(public name: string) {
+export class Argument extends Node {
+    constructor() {
         super()
     }
     toString() {
-        return this.name
+        return 'arg'
     }
-    interpret(env: Env) {
-        return env[this.name]
+    interpret(input: string) {
+        return input
     }
 }
 
@@ -41,8 +39,8 @@ export class Concat extends Node {
     toString() {
         return `concat(${this.x}, ${this.y})`
     }
-    interpret(env: Env) {
-        return this.x.interpret(env) + this.y.interpret(env)
+    interpret(input: string) {
+        return this.x.interpret(input) + this.y.interpret(input)
     }
 }
 
@@ -53,7 +51,8 @@ export class Replace extends Node {
     toString() {
         return `${this.str}.replace(${this.search}, ${this.replacement})`
     }
-    interpret(env: Env) {
-        return this.str.interpret(env).replace(this.search.interpret(env), this.replacement.interpret(env))
+    interpret(input: string) {
+        return this.str.interpret(input).replace(this.search.interpret(input), this.replacement.interpret(input))
     }
 }
+
