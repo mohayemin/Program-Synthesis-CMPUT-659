@@ -1,15 +1,13 @@
+export let cacheHitCount = 0
 export abstract class Node {
-    size: number
-    getSize() {
-        return this.size
-    }
+    constructor(public cost: number) { }
     abstract toString(): string
     abstract interpret(input: string): string
 }
 
 export class Str extends Node {
-    constructor(public value: string) {
-        super()
+    constructor(public value: string, cost: number) {
+        super(cost)
         this.value = value
     }
     toString() {
@@ -21,8 +19,8 @@ export class Str extends Node {
 }
 
 export class Argument extends Node {
-    constructor() {
-        super()
+    constructor(cost: number) {
+        super(cost)
     }
     toString() {
         return 'arg'
@@ -33,8 +31,8 @@ export class Argument extends Node {
 }
 
 export class Concat extends Node {
-    constructor(public x: Node, public y: Node) {
-        super()
+    constructor(public x: Node, public y: Node, baseCost: number) {
+        super(baseCost + x.cost + y.cost)
     }
     toString() {
         return `concat(${this.x}, ${this.y})`
@@ -45,14 +43,21 @@ export class Concat extends Node {
 }
 
 export class Replace extends Node {
-    constructor(public str: Node, public search: Node, public replacement: Node) {
-        super()
+    private resultCache: object = {}
+    constructor(public str: Node, public search: Node, public replacement: Node, baseCost: number) {
+        super(baseCost + str.cost + search.cost + replacement.cost)
     }
     toString() {
         return `${this.str}.replace(${this.search}, ${this.replacement})`
     }
     interpret(input: string) {
-        return this.str.interpret(input).replace(this.search.interpret(input), this.replacement.interpret(input))
+        if (!(input in this.resultCache)) {
+            this.resultCache[input] = this.str.interpret(input).replace(this.search.interpret(input), this.replacement.interpret(input))
+        } else {
+            cacheHitCount++
+        }
+
+        return this.resultCache[input]
     }
 }
 
