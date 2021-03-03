@@ -8,14 +8,14 @@ export class ProbBUS {
     public programsGenerated = 0
     public programsEvaluated = 0
     constructor(
-        public bound: number,
+        public maxAllowedCost: number,
         public grammar: ProbGrammar
     ) {
     }
 
-    grow(programList: SortedProgramList, grammer: ProbGrammar, outputCache: Set<string>): void {
+    grow(programList: SortedProgramList, grammer: ProbGrammar, outputCache: Set<string>, cost: number): void {
         for (const func of grammer.functions) {
-            func.grow(programList, grammer, outputCache)
+            func.grow(programList, grammer, outputCache, cost)
         }
     }
 
@@ -25,13 +25,14 @@ export class ProbBUS {
         let programList = new SortedProgramList()
         programList.push(this.grammar.argument.createNode(), ...this.grammar.constants.map<Node>(r => r.createNode()))
         let evaluatedCount = 0
+        let allowedCost = Math.round(Math.max(...programList.items().map(n => n.cost)))
 
-        for (let i = 0; i < this.bound; i++) {
-            this.grow(programList, this.grammar, outputCache)
+        while (allowedCost <= this.maxAllowedCost) {
+            console.log(`evaluating cost ${allowedCost} programs`)
 
             while (evaluatedCount < programList.size()) {
                 const program = programList.get(evaluatedCount)
-                console.log(evaluatedCount, programList.size(), outputCache.size, program.toString(), '  ', program.interpret(this.grammar.ioSet[0].in), program.cost.toFixed(0))
+                console.log('    ', program.toString(), '  ', program.interpret(this.grammar.ioSet[0].in))
 
                 if (this.grammar.isCorrect(program)) {
                     return {
@@ -43,6 +44,10 @@ export class ProbBUS {
                 }
                 evaluatedCount++
             }
+
+            console.log(`analyzed total ${programList.size()} programs without success. Moving to next cost.`)
+            allowedCost++
+            this.grow(programList, this.grammar, outputCache, allowedCost)
         }
 
         return null

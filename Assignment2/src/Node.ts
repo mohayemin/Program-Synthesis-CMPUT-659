@@ -44,11 +44,11 @@ export class Concat extends Node {
 
 export class Replace extends Node {
     private resultCache: object = {}
-    constructor(public str: Node, public search: Node, public replacement: Node, baseCost: number) {
-        super(baseCost + str.cost + search.cost + replacement.cost)
+    constructor(public str: Node, public search: Node, public replacement: Node, cost: number) {
+        super(cost)
     }
     toString() {
-        return `${this.str}.replace(${this.search}, ${this.replacement})`
+        return  `replace(${this.str},${this.search},${this.replacement})`
     }
     interpret(input: string) {
         if (!(input in this.resultCache)) {

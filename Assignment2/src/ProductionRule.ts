@@ -14,21 +14,38 @@ export abstract class ProductionRule {
 }
 
 export abstract class FunctionRule extends ProductionRule {
-    abstract grow(programs: SortedProgramList, grammar: ProbGrammar, outputCache: Set<string>): void
+    abstract grow(programs: SortedProgramList, grammar: ProbGrammar, outputCache: Set<string>, allowedCost: number): void
 }
 
 export class ReplaceProductionRule extends FunctionRule {
     constructor(probability: number) {
         super('replace', probability)
     }
-    grow(programList: SortedProgramList, grammar: ProbGrammar, outputCache: Set<string>) {
+    grow(programList: SortedProgramList, grammar: ProbGrammar, outputCache: Set<string>, allowedCost: number) {
         const programs = programList.items()
         for (let iStr = 0; iStr < programs.length; iStr++) {
+            const str = programs[iStr]
+            const cost0 = this.cost + str.cost
+            if (cost0 >= allowedCost)
+                break
+
             for (let iSearch = 0; iSearch < programs.length; iSearch++) {
-                if (iStr === iSearch) continue
+                const search = programs[iSearch]
+                const cost1 = cost0 + search.cost
+                if (cost1 >= allowedCost)
+                    break
+
                 for (let iReplace = 0; iReplace < programs.length; iReplace++) {
-                    if (iSearch === iReplace) continue
-                    const program = new Replace(programs[iStr], programs[iSearch], programs[iReplace], this.cost)
+                    const replace = programs[iReplace]
+                    const cost2 = cost1 + replace.cost
+                    if (cost2 > allowedCost)
+                        break
+
+                    if (search === replace)
+                        continue
+                        
+                    const program = new Replace(str, search, replace, cost2)
+
                     const out = grammar.ioSet.map(io => program.interpret(io.in))
                     const normalOut = this.normalizeOutput(out)
                     if (!outputCache.has(normalOut)) {
