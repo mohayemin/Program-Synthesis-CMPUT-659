@@ -23,27 +23,24 @@ export class ReplaceProductionRule extends FunctionRule {
     }
     grow(programList: SortedProgramList, grammar: ProbGrammar, outputCache: Set<string>, allowedCost: number) {
         const programs = programList.items()
-        for (let iStr = 0; iStr < programs.length; iStr++) {
-            const str = programs[iStr]
+        for (let str of programs) {
             const cost0 = this.cost + str.cost
             if (cost0 >= allowedCost)
                 break
 
-            for (let iSearch = 0; iSearch < programs.length; iSearch++) {
-                const search = programs[iSearch]
+            for (let search of programs) {
                 const cost1 = cost0 + search.cost
                 if (cost1 >= allowedCost)
                     break
 
-                for (let iReplace = 0; iReplace < programs.length; iReplace++) {
-                    const replace = programs[iReplace]
+                for (let replace of programs) {
                     const cost2 = cost1 + replace.cost
                     if (cost2 > allowedCost)
                         break
 
                     if (search === replace)
                         continue
-                        
+
                     const program = new Replace(str, search, replace, cost2)
 
                     const out = grammar.ioSet.map(io => program.interpret(io.in))

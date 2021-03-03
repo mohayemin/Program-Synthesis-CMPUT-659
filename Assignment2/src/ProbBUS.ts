@@ -32,7 +32,7 @@ export class ProbBUS {
 
             while (evaluatedCount < programList.size()) {
                 const program = programList.get(evaluatedCount)
-                console.log('    ', program.toString(), '  ', program.interpret(this.grammar.ioSet[0].in))
+                //console.log('    ', program.toString(), '  ', program.interpret(this.grammar.ioSet[0].in))
 
                 if (this.grammar.isCorrect(program)) {
                     return {
