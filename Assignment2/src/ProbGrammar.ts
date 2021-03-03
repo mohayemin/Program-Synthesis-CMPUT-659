@@ -4,6 +4,7 @@ import { ArgumentRule, ConstantRule, FunctionRule } from "./ProductionRule";
 export class ProbGrammar {
 
     constructor(
+        public name: string,
         public ioSet: IO[],
         public functions: FunctionRule[],
         public constants: ConstantRule[],

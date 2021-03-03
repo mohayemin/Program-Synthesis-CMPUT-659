@@ -1,16 +1,18 @@
-import { Argument, cacheHitCount, Node, Replace, Str } from "./Node"
+import { cacheHitCount } from "./Node"
 import { ProbBUS } from "./ProbBUS"
 import { ProbGrammar } from "./ProbGrammar"
 import { ArgumentRule, ConcatProductionRule, ConstantRule, ReplaceProductionRule } from "./ProductionRule"
 import { SearchResult } from "./SearchResult"
 
-const simplifiedGrammar = new ProbGrammar(
-    [
-        { in: '<change> <string> to <a> number', out: 'change string to a number' },
-        { in: '<<AA>>', out: 'AA'},
-        { in: 'a < 4 and a > 0', out: 'a  4 and a  0' },
-        { in: '<open and <close>', out: 'open and close' },
-    ],
+const ioSet = [
+    // { in: '<<AA>>', out: 'AA'},
+    { in: '<change> <string> to <a> number', out: 'change string to a number' },
+    { in: 'a < 4 and a > 0', out: 'a  4 and a  0' },
+    { in: '<open and <close>', out: 'open and close' },
+]
+const fixedTableGrammar = new ProbGrammar(
+    'table',
+    ioSet,
     [
         new ReplaceProductionRule(0.188),
         new ConcatProductionRule(0.059)
@@ -23,18 +25,46 @@ const simplifiedGrammar = new ProbGrammar(
     new ArgumentRule(0.188)
 )
 
+const uniformCost = 1 / 6
+const uniformDistributionGrammar = new ProbGrammar(
+    'uniform',
+    ioSet,
+    [
+        new ReplaceProductionRule(uniformCost),
+        new ConcatProductionRule(uniformCost)
+    ],
+    [
+        new ConstantRule('', uniformCost),
+        new ConstantRule('<', uniformCost),
+        new ConstantRule('>', uniformCost)
+    ],
+    new ArgumentRule(uniformCost)
+)
+
 function printResult(result: SearchResult) {
     console.log(`* Program: ${result.program.toString()}`)
-    console.log(`* Cost: ${result.program.cost}`)
-    console.log(`* Execution time: ${result.executionDurationMs}ms`)
-    console.log(`* Programs generated: ${result.programsGenerated}`)
+    console.log(`* Cost: ${result.program.cost.toFixed(0)}`)
+    console.log(`* Execution time: ${toKilo(result.executionDurationMs)}s`)
+    console.log(`* Programs generated: ${toMillion(result.programsGenerated)}M`)
     console.log(`* Programs evaluated: ${result.programsEvaluated} (${(100 * result.programsEvaluated / result.programsGenerated).toFixed(2)}%)`)
-    console.log(`* Cache hit: ${cacheHitCount}`)
+    console.log(`* Cache hit: ${toMillion(cacheHitCount)}M`)
     console.log()
+
+    function toMillion(value: number) {
+        return (value / 1e6).toFixed(2)
+    }
+
+    function toKilo(value: number) {
+        return (value/1e3).toFixed(2)
+    }
 }
 
-const probBus = new ProbBUS(50, simplifiedGrammar)
-const result = probBus.synthesize()
+function run(grammar: ProbGrammar){
+    console.log(`=== ${grammar.name} ===`)
+    const probBus = new ProbBUS(100, grammar)
+    const result = probBus.synthesize()
+    printResult(result)
+}
 
-printResult(result)
-
+run(fixedTableGrammar)
+//run(uniformDistributionGrammar)
