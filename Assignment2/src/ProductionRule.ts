@@ -1,7 +1,10 @@
-import { Argument, Node, Replace, Str } from "./Node";
+import { Argument, Concat, Replace, Str } from "./Node";
 import { ProbGrammar } from "./ProbGrammar";
 import { SortedProgramList } from "./SortedProgramList";
 
+function normalizeOutput(out: string[]) {
+    return out.join('|')
+}
 export abstract class ProductionRule {
     public cost: number;
     constructor(
@@ -44,7 +47,7 @@ export class ReplaceProductionRule extends FunctionRule {
                     const program = new Replace(str, search, replace, cost2)
 
                     const out = grammar.ioSet.map(io => program.interpret(io.in))
-                    const normalOut = this.normalizeOutput(out)
+                    const normalOut = normalizeOutput(out)
                     if (!outputCache.has(normalOut)) {
                         outputCache.add(normalOut)
                         programList.push(program)
@@ -53,10 +56,37 @@ export class ReplaceProductionRule extends FunctionRule {
             }
         }
     }
+}
 
-    normalizeOutput(out: string[]) {
-        return out.join('|')
+export class ConcatProductionRule extends FunctionRule {
+    constructor(probability: number) {
+        super('concat', probability)
     }
+    
+    grow(programList: SortedProgramList, grammar: ProbGrammar, outputCache: Set<string>, allowedCost: number): void {
+        const programs = programList.items()
+        for (let x of programs) {
+            const cost0 = this.cost + x.cost
+            if (cost0 >= allowedCost)
+                break
+
+            for (let y of programs) {
+                const cost1 = cost0 + y.cost
+                if (cost1 >= allowedCost)
+                    break
+
+                const program = new Concat(x, y, cost1)
+
+                const out = grammar.ioSet.map(io => program.interpret(io.in))
+                const normalOut = normalizeOutput(out)
+                if (!outputCache.has(normalOut)) {
+                    outputCache.add(normalOut)
+                    programList.push(program)
+                }
+            }
+        }
+    }
+
 }
 
 export class ConstantRule extends ProductionRule {

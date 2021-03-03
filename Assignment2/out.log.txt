@@ -1,0 +1,8 @@
+* Program: replace(replace(replace(replace(replace(replace(arg,'>',''),'<',''),'<',''),'>',''),'>',''),'<','')
+* Cost: 45.812713226704545
+* Execution time: 6814.040099978447ms
+* Programs generated: 491487
+* Programs evaluated: 398725 (81.13%)
+* Cache hit: 28288083
+
+

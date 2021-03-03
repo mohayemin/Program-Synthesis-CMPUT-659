@@ -1,7 +1,7 @@
 import { Argument, cacheHitCount, Node, Replace, Str } from "./Node"
 import { ProbBUS } from "./ProbBUS"
 import { ProbGrammar } from "./ProbGrammar"
-import { ArgumentRule, ConstantRule, ReplaceProductionRule } from "./ProductionRule"
+import { ArgumentRule, ConcatProductionRule, ConstantRule, ReplaceProductionRule } from "./ProductionRule"
 import { SearchResult } from "./SearchResult"
 
 const simplifiedGrammar = new ProbGrammar(
@@ -12,7 +12,8 @@ const simplifiedGrammar = new ProbGrammar(
         { in: '<open and <close>', out: 'open and close' },
     ],
     [
-        new ReplaceProductionRule(0.188)
+        new ReplaceProductionRule(0.188),
+        new ConcatProductionRule(0.059)
     ],
     [
         new ConstantRule('', 0.188),
