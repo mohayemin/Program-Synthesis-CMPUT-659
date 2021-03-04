@@ -2,6 +2,8 @@ import { Argument, Concat, Replace, Str } from "./Node";
 import { ProbGrammar } from "./ProbGrammar";
 import { SortedProgramList } from "./SortedProgramList";
 
+export let oversized = 0
+
 function normalizeOutput(out: string[]) {
     return out.join('|')
 }
@@ -25,18 +27,19 @@ export class ReplaceProductionRule extends FunctionRule {
         super('replace', probability)
     }
     grow(programList: SortedProgramList, grammar: ProbGrammar, outputCache: Set<string>, allowedCost: number) {
-        const programs = programList.items()
-        for (let str of programs) {
+        const oldPrograms = programList.items()
+        
+        for (let str of oldPrograms) {
             const cost0 = this.cost + str.cost
             if (cost0 >= allowedCost)
                 break
 
-            for (let search of programs) {
+            for (let search of oldPrograms) {
                 const cost1 = cost0 + search.cost
                 if (cost1 >= allowedCost)
                     break
 
-                for (let replace of programs) {
+                for (let replace of oldPrograms) {
                     const cost2 = cost1 + replace.cost
                     if (cost2 > allowedCost)
                         break
@@ -45,6 +48,9 @@ export class ReplaceProductionRule extends FunctionRule {
                         continue
 
                     const program = new Replace(str, search, replace, cost2)
+                    if ( program.size() > grammar.sizelimit) {
+                        continue
+                    }
 
                     const out = grammar.ioSet.map(io => program.interpret(io.in))
                     const normalOut = normalizeOutput(out)
@@ -62,7 +68,7 @@ export class ConcatProductionRule extends FunctionRule {
     constructor(probability: number) {
         super('concat', probability)
     }
-    
+
     grow(programList: SortedProgramList, grammar: ProbGrammar, outputCache: Set<string>, allowedCost: number): void {
         const programs = programList.items()
         for (let x of programs) {
@@ -76,6 +82,10 @@ export class ConcatProductionRule extends FunctionRule {
                     break
 
                 const program = new Concat(x, y, cost1)
+
+                if (program.size() > grammar.sizelimit) {
+                    continue
+                }
 
                 const out = grammar.ioSet.map(io => program.interpret(io.in))
                 const normalOut = normalizeOutput(out)

@@ -8,7 +8,9 @@ export class ProbGrammar {
         public ioSet: IO[],
         public functions: FunctionRule[],
         public constants: ConstantRule[],
-        public argument: ArgumentRule
+        public argument: ArgumentRule,
+        public sizelimit = Number.POSITIVE_INFINITY,
+        public costLimit = 100,
     ) {
     }
 

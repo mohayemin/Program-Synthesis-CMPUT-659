@@ -8,7 +8,6 @@ export class ProbBUS {
     public programsGenerated = 0
     public programsEvaluated = 0
     constructor(
-        public maxAllowedCost: number,
         public grammar: ProbGrammar
     ) {
     }
@@ -25,16 +24,16 @@ export class ProbBUS {
         let programList = new SortedProgramList()
         programList.push(this.grammar.argument.createNode(), ...this.grammar.constants.map<Node>(r => r.createNode()))
         let evaluatedCount = 0
-        let allowedCost = Math.round(Math.max(...programList.items().map(n => n.cost)))
+        let allowedCost = Math.ceil(Math.max(...programList.items().map(n => n.cost)))
 
-        while (allowedCost <= this.maxAllowedCost) {
-            console.log(`evaluating cost ${allowedCost} programs`)
-
+        console.log(`cost,#programs`)
+        while (allowedCost <= this.grammar.costLimit) {
             while (evaluatedCount < programList.size()) {
                 const program = programList.get(evaluatedCount)
                 //console.log('    ', program.toString(), '  ', program.interpret(this.grammar.ioSet[0].in))
 
                 if (this.grammar.isCorrect(program)) {
+                    console.log(`${allowedCost},${programList.size()}`)
                     return {
                         program: program,
                         programsEvaluated: evaluatedCount,
@@ -45,7 +44,7 @@ export class ProbBUS {
                 evaluatedCount++
             }
 
-            console.log(`analyzed total ${programList.size()} programs without success. Moving to next cost.`)
+            console.log(`${allowedCost},${programList.size()}`)
             allowedCost++
             this.grow(programList, this.grammar, outputCache, allowedCost)
         }

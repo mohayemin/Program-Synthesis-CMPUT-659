@@ -3,6 +3,7 @@ export abstract class Node {
     constructor(public cost: number) { }
     abstract toString(): string
     abstract interpret(input: string): string
+    abstract size(): number
 }
 
 export class Str extends Node {
@@ -16,6 +17,9 @@ export class Str extends Node {
     interpret(input: string) {
         return this.value
     }
+    size() {
+        return 1
+    }
 }
 
 export class Argument extends Node {
@@ -28,10 +32,14 @@ export class Argument extends Node {
     interpret(input: string) {
         return input
     }
+    size() {
+        return 1
+    }
 }
 
 export abstract class FunctionNode extends Node {
     private resultCache: object = {}
+
     interpret(input: string) {
         if (!(input in this.resultCache)) {
             this.resultCache[input] = this.interpretImpl(input)
@@ -43,6 +51,14 @@ export abstract class FunctionNode extends Node {
     }
 
     protected abstract interpretImpl(input: string): string
+
+    _size: number = 0
+    size() {
+        this._size = this._size || this.sizeImpl()
+        return this._size
+    }
+
+    protected abstract sizeImpl(): number
 }
 
 export class Concat extends FunctionNode {
@@ -55,6 +71,9 @@ export class Concat extends FunctionNode {
     interpretImpl(input: string) {
         return this.x.interpret(input) + this.y.interpret(input)
     }
+    sizeImpl() {
+        return this.x.size() + this.y.size() + 1
+    }
 }
 
 export class Replace extends FunctionNode {
@@ -62,10 +81,13 @@ export class Replace extends FunctionNode {
         super(cost)
     }
     toString() {
-        return  `replace(${this.str},${this.search},${this.replacement})`
+        return `replace(${this.str},${this.search},${this.replacement})`
     }
     interpretImpl(input: string) {
         return this.str.interpret(input).replace(this.search.interpret(input), this.replacement.interpret(input))
+    }
+    sizeImpl() {
+        return this.str.size() + this.search.size() + this.replacement.size() + 1
     }
 }
 
