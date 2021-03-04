@@ -1,5 +1,5 @@
 import { cacheHitCount } from "./Node"
-import { ProbBUS } from "./ProbBUS"
+import { GuidedBUS } from "./GuidedBUS"
 import { ProbGrammar } from "./ProbGrammar"
 import { ArgumentRule, ConcatProductionRule, ConstantRule, ReplaceProductionRule } from "./ProductionRule"
 import { SearchResult } from "./SearchResult"
@@ -26,20 +26,19 @@ const fixedTableGrammar = new ProbGrammar(
     19
 )
 
-const uniformCost = 1 / 6
 const uniformDistributionGrammar = new ProbGrammar(
     'uniform',
     ioSet,
     [
-        new ReplaceProductionRule(uniformCost),
-        new ConcatProductionRule(uniformCost)
+        new ReplaceProductionRule(1/2),
+        new ConcatProductionRule(1/2)
     ],
     [
-        new ConstantRule('', uniformCost),
-        new ConstantRule('<', uniformCost),
-        new ConstantRule('>', uniformCost)
+        new ConstantRule('', 1/4),
+        new ConstantRule('<', 1/4),
+        new ConstantRule('>', 1/4)
     ],
-    new ArgumentRule(uniformCost),
+    new ArgumentRule(1/4),
     19
 )
 
@@ -64,7 +63,7 @@ function printResult(result: SearchResult) {
 
 function run(grammar: ProbGrammar) {
     console.log(`=== ${grammar.name} ===`)
-    const probBus = new ProbBUS(grammar)
+    const probBus = new GuidedBUS(grammar)
     const result = probBus.synthesize()
     printResult(result)
 }

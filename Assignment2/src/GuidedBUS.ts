@@ -1,10 +1,10 @@
 import { performance } from "perf_hooks"
-import { Argument, Node, Str } from "./Node"
+import { Node } from "./Node"
 import { ProbGrammar } from "./ProbGrammar"
 import { SearchResult } from "./SearchResult"
 import { SortedProgramList } from "./SortedProgramList"
 
-export class ProbBUS {
+export class GuidedBUS {
     public programsGenerated = 0
     public programsEvaluated = 0
     constructor(
