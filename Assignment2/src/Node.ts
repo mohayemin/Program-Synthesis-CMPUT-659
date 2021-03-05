@@ -1,9 +1,16 @@
+import { IO } from "./ProbGrammar"
+
 export let cacheHitCount = 0
 export abstract class Node {
+    public solvedIO: IO[]
     constructor(public cost: number) { }
     abstract toString(): string
     abstract interpret(input: string): string
     abstract size(): number
+    verify(ioSet: IO[]): boolean {
+        this.solvedIO = ioSet.filter(io => this.interpret(io.in) === io.out)
+        return this.solvedIO.length === ioSet.length
+    }
 }
 
 export class Str extends Node {

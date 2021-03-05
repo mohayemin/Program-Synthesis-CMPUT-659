@@ -20,3 +20,6 @@ Optimizations
 * Programs evaluated: 525544 (21.95%)
 * Cache hit: 188.36M
 
+In uniform distribution, concat rearly generates duplicate.
+This is why when concat has same probability as replace,
+too many programs are generated

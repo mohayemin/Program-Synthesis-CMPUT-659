@@ -4,7 +4,7 @@ import { ProbGrammar } from "./ProbGrammar"
 import { SearchResult } from "./SearchResult"
 import { SortedProgramList } from "./SortedProgramList"
 
-export class GuidedBUS {
+export class ProbeSearch {
     public programsGenerated = 0
     public programsEvaluated = 0
     constructor(
@@ -40,6 +40,9 @@ export class GuidedBUS {
                         programsGenerated: programList.size(),
                         executionDurationMs: performance.now() - startTime
                     }
+                }
+                if(program.solvedIO.length > 0) {
+
                 }
                 evaluatedCount++
             }

@@ -1,4 +1,4 @@
-import { Argument, Concat, Replace, Str } from "./Node";
+import { Argument, Concat, Node, Replace, Str } from "./Node";
 import { ProbGrammar } from "./ProbGrammar";
 import { SortedProgramList } from "./SortedProgramList";
 
@@ -28,7 +28,7 @@ export class ReplaceProductionRule extends FunctionRule {
     }
     grow(programList: SortedProgramList, grammar: ProbGrammar, outputCache: Set<string>, allowedCost: number) {
         const oldPrograms = programList.items()
-        
+        let newProgramCount = 0
         for (let str of oldPrograms) {
             const cost0 = this.cost + str.cost
             if (cost0 >= allowedCost)
@@ -48,15 +48,15 @@ export class ReplaceProductionRule extends FunctionRule {
                         continue
 
                     const program = new Replace(str, search, replace, cost2)
-                    if ( program.size() > grammar.sizelimit) {
-                        continue
-                    }
 
                     const out = grammar.ioSet.map(io => program.interpret(io.in))
                     const normalOut = normalizeOutput(out)
                     if (!outputCache.has(normalOut)) {
                         outputCache.add(normalOut)
+                        newProgramCount++
                         programList.push(program)
+                        if (newProgramCount >= grammar.programPerIterationLimit)
+                            return
                     }
                 }
             }
@@ -71,6 +71,7 @@ export class ConcatProductionRule extends FunctionRule {
 
     grow(programList: SortedProgramList, grammar: ProbGrammar, outputCache: Set<string>, allowedCost: number): void {
         const programs = programList.items()
+        let newProgramCount = 0
         for (let x of programs) {
             const cost0 = this.cost + x.cost
             if (cost0 >= allowedCost)
@@ -83,15 +84,14 @@ export class ConcatProductionRule extends FunctionRule {
 
                 const program = new Concat(x, y, cost1)
 
-                if (program.size() > grammar.sizelimit) {
-                    continue
-                }
-
                 const out = grammar.ioSet.map(io => program.interpret(io.in))
                 const normalOut = normalizeOutput(out)
                 if (!outputCache.has(normalOut)) {
                     outputCache.add(normalOut)
+                    newProgramCount++
                     programList.push(program)
+                    if (newProgramCount >= grammar.programPerIterationLimit)
+                        return
                 }
             }
         }

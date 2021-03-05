@@ -9,13 +9,9 @@ export class ProbGrammar {
         public functions: FunctionRule[],
         public constants: ConstantRule[],
         public argument: ArgumentRule,
-        public sizelimit = Number.POSITIVE_INFINITY,
+        public programPerIterationLimit = Number.POSITIVE_INFINITY,
         public costLimit = 100,
     ) {
-    }
-
-    isCorrect(program: Node) {
-        return this.ioSet.every(io => program.interpret(io.in) === io.out)
     }
 }
 

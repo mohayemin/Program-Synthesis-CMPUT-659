@@ -23,7 +23,7 @@ const fixedTableGrammar = new ProbGrammar(
         new ConstantRule('>', 0.188),
     ],
     new ArgumentRule(0.188),
-    19
+    Number.POSITIVE_INFINITY
 )
 
 const uniformDistributionGrammar = new ProbGrammar(
@@ -39,7 +39,7 @@ const uniformDistributionGrammar = new ProbGrammar(
         new ConstantRule('>', 1/4)
     ],
     new ArgumentRule(1/4),
-    19
+    50000
 )
 
 function printResult(result: SearchResult) {
