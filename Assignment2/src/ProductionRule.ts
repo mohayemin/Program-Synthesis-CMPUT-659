@@ -9,11 +9,17 @@ function normalizeOutput(out: string[]) {
 }
 export abstract class ProductionRule {
     public cost: number;
+    public probability: number;
     constructor(
         public name: string,
-        public probability: number,
+        probability: number,
         public readonly isGrowable: boolean = false
     ) {
+        this.setProbability(probability)
+    }
+
+    setProbability(probability: number) {
+        this.probability = probability
         this.cost = -Math.log2(probability)
     }
 }
@@ -24,7 +30,7 @@ export abstract class FunctionRule extends ProductionRule {
 
 export class ReplaceProductionRule extends FunctionRule {
     constructor(probability: number) {
-        super('replace', probability)
+        super(Replace.name, probability)
     }
     grow(programList: SortedProgramList, grammar: ProbGrammar, outputCache: Set<string>, allowedCost: number) {
         const oldPrograms = programList.items()
@@ -66,7 +72,7 @@ export class ReplaceProductionRule extends FunctionRule {
 
 export class ConcatProductionRule extends FunctionRule {
     constructor(probability: number) {
-        super('concat', probability)
+        super(Concat.name, probability)
     }
 
     grow(programList: SortedProgramList, grammar: ProbGrammar, outputCache: Set<string>, allowedCost: number): void {
@@ -111,7 +117,7 @@ export class ConstantRule extends ProductionRule {
 
 export class ArgumentRule extends ProductionRule {
     constructor(probability: number) {
-        super('arg', probability)
+        super(Argument.name, probability)
     }
     createNode() {
         return new Argument(this.cost)

@@ -2,20 +2,33 @@ import { IO } from "./ProbGrammar"
 
 export let cacheHitCount = 0
 export abstract class Node {
-    public solvedIO: IO[]
-    constructor(public cost: number) { }
+    public solvedInputs: string[]
+    constructor(public name: string, public components: Node[], public cost: number) {
+
+    }
     abstract toString(): string
     abstract interpret(input: string): string
     abstract size(): number
+
     verify(ioSet: IO[]): boolean {
-        this.solvedIO = ioSet.filter(io => this.interpret(io.in) === io.out)
-        return this.solvedIO.length === ioSet.length
+        this.solvedInputs = ioSet.filter(io => this.interpret(io.in) === io.out).map(io => io.in)
+        return this.solvedInputs.length === ioSet.length
+    }
+    isPartialSolution() {
+        return this.solvedInputs.length > 0
+    }
+
+    hasRule(name: string) {
+        if (this.name === name)
+            return true
+
+        return this.components.some(c => c.hasRule(name))
     }
 }
 
 export class Str extends Node {
     constructor(public value: string, cost: number) {
-        super(cost)
+        super(value, [], cost)
         this.value = value
     }
     toString() {
@@ -31,7 +44,7 @@ export class Str extends Node {
 
 export class Argument extends Node {
     constructor(cost: number) {
-        super(cost)
+        super('Argument', [], cost)
     }
     toString() {
         return 'arg'
@@ -70,7 +83,7 @@ export abstract class FunctionNode extends Node {
 
 export class Concat extends FunctionNode {
     constructor(public x: Node, public y: Node, cost: number) {
-        super(cost)
+        super('Concat', [x, y], cost)
     }
     toString() {
         return `concat(${this.x},${this.y})`
@@ -85,7 +98,7 @@ export class Concat extends FunctionNode {
 
 export class Replace extends FunctionNode {
     constructor(public str: Node, public search: Node, public replacement: Node, cost: number) {
-        super(cost)
+        super('Replace', [str, search, replacement], cost)
     }
     toString() {
         return `replace(${this.str},${this.search},${this.replacement})`

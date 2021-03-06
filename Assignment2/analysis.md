@@ -11,7 +11,7 @@ Optimizations
 * Programs evaluated: 2392790 (99.94%)
 * Cache hit: 321.04M
 
-**Uniform distribution (without concat)**
+**Uniform distribution (Plain)**
 * Program: replace(replace(replace(replace(replace(replace(arg,'<',''),'>',''),'>',''),'<',''),'<',''),'>','')
 * Size: 19
 * Cost: 49
@@ -20,6 +20,11 @@ Optimizations
 * Programs evaluated: 525544 (21.95%)
 * Cache hit: 188.36M
 
-In uniform distribution, concat rearly generates duplicate.
-This is why when concat has same probability as replace,
-too many programs are generated
+**Uniform distribution (Probe)**
+* Program: replace(replace(replace(replace(replace(replace(arg,'<',''),'<',''),'<',''),'>',''),'>',''),'>','')
+* Size: 19
+* Cost: 45
+* Execution time: 45.58s
+* Programs generated: 2.39M
+* Programs evaluated: 2392378 (99.92%)
+* Cache hit: 211.12M

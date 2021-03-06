@@ -3,6 +3,7 @@ import { GuidedBUS } from "./GuidedBUS"
 import { ProbGrammar } from "./ProbGrammar"
 import { ArgumentRule, ConcatProductionRule, ConstantRule, ReplaceProductionRule } from "./ProductionRule"
 import { SearchResult } from "./SearchResult"
+import { ProbeSearch } from "./ProbeSearch"
 
 const ioSet = [
     // { in: '<<AA>>', out: 'AA'},
@@ -18,11 +19,11 @@ const fixedTableGrammar = new ProbGrammar(
         new ConcatProductionRule(0.059)
     ],
     [
+        new ArgumentRule(0.188),
         new ConstantRule('', 0.188),
         new ConstantRule('<', 0.188),
         new ConstantRule('>', 0.188),
     ],
-    new ArgumentRule(0.188),
     Number.POSITIVE_INFINITY
 )
 
@@ -30,16 +31,16 @@ const uniformDistributionGrammar = new ProbGrammar(
     'uniform',
     ioSet,
     [
-        new ReplaceProductionRule(1/2),
-        new ConcatProductionRule(1/2)
+        new ReplaceProductionRule(1/6),
+        new ConcatProductionRule(1/6)
     ],
     [
-        new ConstantRule('', 1/4),
-        new ConstantRule('<', 1/4),
-        new ConstantRule('>', 1/4)
+        new ArgumentRule(1/6),
+        new ConstantRule('', 1/6),
+        new ConstantRule('<', 1/6),
+        new ConstantRule('>', 1/6)
     ],
-    new ArgumentRule(1/4),
-    50000
+    Number.POSITIVE_INFINITY
 )
 
 function printResult(result: SearchResult) {
@@ -69,4 +70,6 @@ function run(grammar: ProbGrammar) {
 }
 
 //run(fixedTableGrammar)
-run(uniformDistributionGrammar)
+//run(uniformDistributionGrammar)
+const probe = new ProbeSearch(uniformDistributionGrammar)
+printResult(probe.synthesize())
