@@ -1,6 +1,9 @@
 import { IO } from "./ProbGrammar"
 
-export let cacheHitCount = 0
+export const cache = {
+    hit: 0,
+    miss: 0
+}
 export abstract class Node {
     public solvedInputs: string[]
     constructor(public name: string, public components: Node[], public cost: number) {
@@ -63,8 +66,9 @@ export abstract class FunctionNode extends Node {
     interpret(input: string) {
         if (!(input in this.resultCache)) {
             this.resultCache[input] = this.interpretImpl(input)
+            cache.miss++
         } else {
-            cacheHitCount++
+            cache.hit++
         }
 
         return this.resultCache[input]

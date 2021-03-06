@@ -3,28 +3,48 @@ Optimizations
 2. Early exit loops in node.grow functions
 3. Increase cost by one in each step
 
+## Short Program
+* Program: replace(replace(replace(replace(replace(arg,'<',''),'<',''),'>',''),'>',''),'>','')
+* Program size: 16
+
 **Fixed distribution table**
-* Program: replace(replace(replace(replace(replace(replace(arg,'<',''),'<',''),'<',''),'>',''),'>',''),'>','')
-* Cost: 46
-* Execution time: 66.41s
-* Programs generated: 2.39M
-* Programs evaluated: 2392790 (99.94%)
-* Cache hit: 321.04M
+* Cost: 39
+* Execution time: 5.20s
+* Programs generated: 0.19M
+* Programs evaluated: 0.19 (99.83%)
+* Cache hit: 24.84M
 
 **Uniform distribution (Plain)**
-* Program: replace(replace(replace(replace(replace(replace(arg,'<',''),'>',''),'>',''),'<',''),'<',''),'>','')
-* Size: 19
-* Cost: 49
-* Execution time: 39.77s
-* Programs generated: 2.39M
-* Programs evaluated: 525544 (21.95%)
-* Cache hit: 188.36M
+* Cost: 41
+* Execution time: 33.34s
+* Programs generated: 1.16M
+* Programs evaluated: 0.87 (75.57%)
+* Cache hit: 189.47M
 
 **Uniform distribution (Probe)**
+* Cost: 38
+* Execution time: 2.81s
+* Programs generated: 0.19M
+* Programs evaluated: 0.19M (99.64%)
+* Cache hit: 39.02M
+
+## Original Program
 * Program: replace(replace(replace(replace(replace(replace(arg,'<',''),'<',''),'<',''),'>',''),'>',''),'>','')
-* Size: 19
-* Cost: 45
-* Execution time: 45.58s
+* Size: 19 
+ 
+**Fixed distribution table**
+* Cost: 46
+* Execution time: 72.07s
 * Programs generated: 2.39M
-* Programs evaluated: 2392378 (99.92%)
-* Cache hit: 211.12M
+* Programs evaluated: 2.39M (99.94%)
+* Cache hit: 325.83M
+
+**Uniform distribution (Plain)**  
+Runs out of memory before finding result
+
+**Uniform distribution (Probe)**
+* Cost: 45
+* Execution time: 55.28s
+* Programs generated: 2.39M
+* Programs evaluated: 2.39M (99.92%)
+* Cache hit: 536.95M

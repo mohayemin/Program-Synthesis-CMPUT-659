@@ -1,10 +1,12 @@
 import { performance } from "perf_hooks"
 import { Node } from "./Node"
+import { PartialSolutions } from "./PartialSolutions"
 import { IO, ProbGrammar } from "./ProbGrammar"
 import { SearchResult } from "./SearchResult"
 import { SortedProgramList } from "./SortedProgramList"
 
 export class GuidedBUS {
+    algorithm = "Guided BUS"
     constructor(
         public grammar: ProbGrammar,
         private findPartial = false,
@@ -26,14 +28,10 @@ export class GuidedBUS {
         let programsEvaluated = 0
         let allowedCost = Math.ceil(Math.max(...programList.items().map(n => n.cost)))
 
-
-
-        console.log(`cost,#programs`)
         while (allowedCost <= this.grammar.costLimit) {
             while (programsEvaluated < programList.size()) {
                 const program = programList.get(programsEvaluated)
                 if (program.verify(this.grammar.ioSet)) {
-                    console.log(`${allowedCost},${programList.size()}`)
                     return {
                         program,
                         programsEvaluated,
@@ -56,7 +54,6 @@ export class GuidedBUS {
                 programsEvaluated++
             }
 
-            console.log(`${allowedCost},${programList.size()}`)
             allowedCost++
             this.grow(programList, this.grammar, outputCache, allowedCost)
         }
@@ -65,26 +62,3 @@ export class GuidedBUS {
     }
 }
 
-
-export class PartialSolutions {
-    private programSet = new Set<string>()
-    private solvedInputSet = new Set<string>()
-    constructor() {
-
-    }
-
-    tryAdd(program: Node) {
-        if (program.solvedInputs.length > 0) {
-            const programString = program.toString()
-            if (!this.programSet.has(programString)) {
-                if (program.solvedInputs.some(input => !this.solvedInputSet.has(input))) {
-                    this.programSet.add(programString)
-                    program.solvedInputs.forEach(input => this.solvedInputSet.add(input))
-                    return true
-                }
-            }
-        }
-
-        return false
-    }
-}

@@ -1,9 +1,10 @@
-import { cacheHitCount } from "./Node"
 import { GuidedBUS } from "./GuidedBUS"
 import { ProbGrammar } from "./ProbGrammar"
 import { ArgumentRule, ConcatProductionRule, ConstantRule, ReplaceProductionRule } from "./ProductionRule"
 import { SearchResult } from "./SearchResult"
 import { ProbeSearch } from "./ProbeSearch"
+import { Search } from "./Search"
+import { cache } from "./Node"
 
 const ioSet = [
     // { in: '<<AA>>', out: 'AA'},
@@ -12,7 +13,7 @@ const ioSet = [
     { in: '<open and <close>', out: 'open and close' },
 ]
 const fixedTableGrammar = new ProbGrammar(
-    'table',
+    'Fixed distribution table',
     ioSet,
     [
         new ReplaceProductionRule(0.188),
@@ -28,7 +29,7 @@ const fixedTableGrammar = new ProbGrammar(
 )
 
 const uniformDistributionGrammar = new ProbGrammar(
-    'uniform',
+    'Uniform distribution',
     ioSet,
     [
         new ReplaceProductionRule(1/6),
@@ -49,8 +50,8 @@ function printResult(result: SearchResult) {
     console.log(`* Cost: ${result.program.cost.toFixed(0)}`)
     console.log(`* Execution time: ${toKilo(result.executionDurationMs)}s`)
     console.log(`* Programs generated: ${toMillion(result.programsGenerated)}M`)
-    console.log(`* Programs evaluated: ${result.programsEvaluated} (${(100 * result.programsEvaluated / result.programsGenerated).toFixed(2)}%)`)
-    console.log(`* Cache hit: ${toMillion(cacheHitCount)}M`)
+    console.log(`* Programs evaluated: ${toMillion(result.programsEvaluated)}M (${(100 * result.programsEvaluated / result.programsGenerated).toFixed(2)}%)`)
+    console.log(`* Cache hit: ${toMillion(cache.hit)}M (${(cache.hit/(cache.hit + cache.miss)).toFixed(2)}%)`)
     console.log()
 
     function toMillion(value: number) {
@@ -62,14 +63,20 @@ function printResult(result: SearchResult) {
     }
 }
 
-function run(grammar: ProbGrammar) {
-    console.log(`=== ${grammar.name} ===`)
-    const probBus = new GuidedBUS(grammar)
-    const result = probBus.synthesize()
+function run(search: Search) {
+    cache.hit = 0
+    cache.miss = 0
+    console.log(`=== ${search.algorithm}: ${search.grammar.name} ===`)
+    const result = search.synthesize()
     printResult(result)
 }
 
-//run(fixedTableGrammar)
-//run(uniformDistributionGrammar)
-const probe = new ProbeSearch(uniformDistributionGrammar)
-printResult(probe.synthesize())
+run(new GuidedBUS(fixedTableGrammar))
+//run(new GuidedBUS(uniformDistributionGrammar))
+run(new ProbeSearch(uniformDistributionGrammar))
+
+ioSet[0] = { in: 'change> <string> to <a> number', out: 'change string to a number' }
+run(new GuidedBUS(fixedTableGrammar))
+run(new GuidedBUS(uniformDistributionGrammar))
+run(new ProbeSearch(uniformDistributionGrammar))
+

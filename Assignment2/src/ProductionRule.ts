@@ -2,8 +2,6 @@ import { Argument, Concat, Node, Replace, Str } from "./Node";
 import { ProbGrammar } from "./ProbGrammar";
 import { SortedProgramList } from "./SortedProgramList";
 
-export let oversized = 0
-
 function normalizeOutput(out: string[]) {
     return out.join('|')
 }

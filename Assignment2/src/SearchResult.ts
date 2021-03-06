@@ -1,4 +1,4 @@
-import { PartialSolutions } from "./GuidedBUS";
+import { PartialSolutions } from "./PartialSolutions";
 import { Node } from "./Node";
 
 export interface SearchResult {
