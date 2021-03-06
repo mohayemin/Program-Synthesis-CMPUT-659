@@ -1,3 +1,4 @@
+import { resolve } from "path"
 import { performance } from "perf_hooks"
 import { GuidedBUS } from "./GuidedBUS"
 import { PartialSolutions } from "./PartialSolutions"
@@ -31,7 +32,7 @@ export class ProbeSearch {
             if (!result.isPartial) {
                 this.updateFinalResult(result, finalResult)
                 finalResult.executionDurationMs = performance.now() - startTime
-                return result
+                return finalResult
             } else {
                 this.update(result, finalResult)
                 console.log('updated distribution')
@@ -42,6 +43,7 @@ export class ProbeSearch {
     }
 
     updateFinalResult(partialResult: SearchResult, finalResult: SearchResult) {
+        finalResult.program = partialResult.program
         finalResult.programsEvaluated += partialResult.programsEvaluated
         finalResult.programsGenerated += partialResult.programsGenerated
     }
@@ -60,6 +62,7 @@ export class ProbeSearch {
         }
 
         this.updateFinalResult(partialResult, finalResult)
+        console.log(partialResult.programsGenerated)
         console.log(rules.map(r => `${r.name},${r.probability.toFixed(2)},${r.cost.toFixed(2)}`))
     }
 }

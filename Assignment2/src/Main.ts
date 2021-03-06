@@ -51,7 +51,7 @@ function printResult(result: SearchResult) {
     console.log(`* Execution time: ${toKilo(result.executionDurationMs)}s`)
     console.log(`* Programs generated: ${toMillion(result.programsGenerated)}M`)
     console.log(`* Programs evaluated: ${toMillion(result.programsEvaluated)}M (${(100 * result.programsEvaluated / result.programsGenerated).toFixed(2)}%)`)
-    console.log(`* Cache hit: ${toMillion(cache.hit)}M (${(cache.hit/(cache.hit + cache.miss)).toFixed(2)}%)`)
+    console.log(`* Cache hit: ${toMillion(cache.hit)}M (${(100*cache.hit/(cache.hit + cache.miss)).toFixed(2)}%)`)
     console.log()
 
     function toMillion(value: number) {
@@ -71,11 +71,13 @@ function run(search: Search) {
     printResult(result)
 }
 
+console.log('=== original ===')
 run(new GuidedBUS(fixedTableGrammar))
 //run(new GuidedBUS(uniformDistributionGrammar))
 run(new ProbeSearch(uniformDistributionGrammar))
 
-ioSet[0] = { in: 'change> <string> to <a> number', out: 'change string to a number' }
+console.log('=== modified ===')
+ioSet[0] = { in: '<change> <string to <a> number', out: 'change string to a number' }
 run(new GuidedBUS(fixedTableGrammar))
 run(new GuidedBUS(uniformDistributionGrammar))
 run(new ProbeSearch(uniformDistributionGrammar))
