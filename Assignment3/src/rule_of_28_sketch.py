@@ -2,6 +2,7 @@ from player import Player
 from DSL import *
 import numpy as np
 
+
 class Rule_of_28_Player_PS(Player):
 
     def __init__(self, program_yes_no, program_decide_column):
@@ -17,7 +18,7 @@ class Rule_of_28_Player_PS(Player):
         self.lows = 5
         self.marker = 6
         self.threshold = 29
-                
+
         self.program_yes_no = program_yes_no
         self.program_decide_column = program_decide_column
 
@@ -29,20 +30,20 @@ class Rule_of_28_Player_PS(Player):
         env['marker'] = self.marker
         env['move_value'] = self.move_value
         env['neutrals'] = [col[0] for col in self._state.neutral_positions]
-        
+
         return env
 
     def get_action(self, state):
         self._state = state
-        
+
         self.actions = self._state.available_moves()
-        
+
         neutrals = [col[0] for col in self._state.neutral_positions]
-        
+
         if self.actions == ['y', 'n']:
             if self.will_player_win_after_n():
                 return 'n'
-            
+
             elif self.are_there_available_columns_to_play():
                 return 'y'
             else:
@@ -53,12 +54,11 @@ class Rule_of_28_Player_PS(Player):
                     return 'n'
                 else:
                     return 'y'
-        else:           
+        else:
             env = self.init_env()
             action_chosen = self.actions[self.program_decide_column.interpret(env)]
-            
-            return action_chosen
 
+            return action_chosen
 
     def get_available_columns(self):
         """ Return a list of all available columns. """
@@ -86,7 +86,7 @@ class Rule_of_28_Player_PS(Player):
         for won_column in clone_state.finished_columns:
             if self._state.player_turn == won_column[1]:
                 won_columns += 1
-        #This means if the player stop playing now, they will win the game
+        # This means if the player stop playing now, they will win the game
         if won_columns == 3:
             return True
         else:

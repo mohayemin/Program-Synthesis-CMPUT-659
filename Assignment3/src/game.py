@@ -3,6 +3,7 @@ import random
 import copy
 import pickle
 
+
 class Cell:
     def __init__(self):
         """
@@ -12,6 +13,7 @@ class Cell:
         """
 
         self.markers = []
+
 
 class Board:
     def __init__(self, column_range, offset, initial_height):
@@ -25,11 +27,11 @@ class Board:
         self.initial_height = initial_height
 
         height = self.initial_height
-        self.board = [[] for _ in range(self.column_range[1]+1)]
-        for x in range(self.column_range[0],self.column_range[1]+1):
+        self.board = [[] for _ in range(self.column_range[1] + 1)]
+        for x in range(self.column_range[0], self.column_range[1] + 1):
             for _ in range(height):
                 self.board[x].append(Cell())
-            if x < self.column_range[1]/2 +1:
+            if x < self.column_range[1] / 2 + 1:
                 height += self.offset
             else:
                 height -= self.offset
@@ -42,19 +44,17 @@ class Board:
         not chosen "n" action yet).
         """
 
-
-
         partial_completed_rows = [item[0] for item in rows]
         completed_rows = [column_won[0] for column_won in finished_columns]
         player_completed_rows = [column_won[1] for column_won in finished_columns]
-        for x in range(self.column_range[0],self.column_range[1]+1):
+        for x in range(self.column_range[0], self.column_range[1] + 1):
             list_of_cells = self.board[x]
             print('{:3d}:'.format(x), end='')
             # Print the whole row with the player's id in case the player has 
             # won that column
             if x in completed_rows:
                 for cell in list_of_cells:
-                    print('[', player_completed_rows[completed_rows.index(x)], ']', sep='',end='')
+                    print('[', player_completed_rows[completed_rows.index(x)], ']', sep='', end='')
             else:
                 for cell in list_of_cells:
                     print(cell.markers, end='')
@@ -66,23 +66,24 @@ class Board:
         """ Check if two boards are equal. """
 
         height = self.initial_height
-        for x in range(self.column_range[0],self.column_range[1]+1):
+        for x in range(self.column_range[0], self.column_range[1] + 1):
             list_of_cells = self.board[x]
             list_of_cells_2 = board_2.board[x]
             for i in range(len(list_of_cells)):
                 # Check if all Cell in [x] are equal
                 if sorted(list_of_cells[i].markers) \
-                    != sorted(list_of_cells_2[i].markers):
+                        != sorted(list_of_cells_2[i].markers):
                     return False
-            if x < self.column_range[1]/2 +1:
+            if x < self.column_range[1] / 2 + 1:
                 height += self.offset
             else:
                 height -= self.offset
         return True
 
+
 class Game:
     def __init__(self, n_players, dice_number, dice_value, column_range,
-                    offset, initial_height):
+                 offset, initial_height):
         """
         - n_players is the number of players (only 2 is possible).
         - dice_number is the number of dice used in the Can't Stop game.
@@ -108,10 +109,10 @@ class Game:
         self.n_players = n_players
         self.dice_number = dice_number
         self.dice_value = dice_value
-        self.column_range = column_range 
+        self.column_range = column_range
         self.offset = offset
         self.initial_height = initial_height
-        self.board_game = Board(self.column_range, self.offset, 
+        self.board_game = Board(self.column_range, self.offset,
                                 self.initial_height
                                 )
         self.player_turn = 1
@@ -121,15 +122,15 @@ class Game:
         self.current_roll = self.roll_dice()
         self.n_neutral_markers = 0
         self.neutral_positions = []
-        self.actions_taken = [] 
-    
+        self.actions_taken = []
+
     def check_game_equality(self, game):
         """ Check if self and 'game' represents the same state. """
 
         return self.check_boardgame_equality(game) and \
-                self.player_turn == game.player_turn and \
-                self.n_neutral_markers == game.n_neutral_markers and \
-                sorted(self.neutral_positions) == sorted(game.neutral_positions)
+               self.player_turn == game.player_turn and \
+               self.n_neutral_markers == game.n_neutral_markers and \
+               sorted(self.neutral_positions) == sorted(game.neutral_positions)
 
     def set_manual_board(self, manual_board, finished_columns, player_won_column):
         """ Set a manual board in matrix form. """
@@ -137,12 +138,12 @@ class Game:
         self.finished_columns = finished_columns
         self.player_won_column = player_won_column
         height = self.initial_height
-        for x in range(self.column_range[0],self.column_range[1]+1):
+        for x in range(self.column_range[0], self.column_range[1] + 1):
             list_of_cells = self.board_game.board[x]
-            list_of_cells_2 = manual_board[x-2]
+            list_of_cells_2 = manual_board[x - 2]
             for i in range(len(list_of_cells)):
                 list_of_cells[i].markers = list_of_cells_2[i]
-            if x < self.column_range[1]/2 +1:
+            if x < self.column_range[1] / 2 + 1:
                 height += self.offset
             else:
                 height -= self.offset
@@ -152,19 +153,18 @@ class Game:
 
         condition_1 = self.board_game.check_board_equality(game.board_game)
         condition_2 = sorted(self.finished_columns) \
-                        == sorted(game.finished_columns)
+                      == sorted(game.finished_columns)
         condition_3 = sorted(self.player_won_column) \
-                        == sorted(game.player_won_column)
-                
+                      == sorted(game.player_won_column)
+
         return condition_1 and condition_2 and condition_3
 
-    
     def print_board(self):
         self.board_game.print_board(self.player_won_column, self.finished_columns)
 
     def clone(self):
         """Return a "deepcopy" of this game. Used for MCTS routines."""
-        
+
         return pickle.loads(pickle.dumps(self, -1))
 
     def play(self, chosen_play):
@@ -172,7 +172,7 @@ class Game:
         Apply the "chosen_play" to the game.
         Depending on the play and dice roll, it will change player_turn.
         """
-        
+
         if chosen_play == 'n':
             self.transform_neutral_markers()
             # Next action should be to choose a dice combination
@@ -202,30 +202,29 @@ class Game:
                 self.neutral_positions.append((col, 0))
             # If there's no zero but there is player id marker
             elif current_position_zero == -1:
-                #First check if the player will win that column
+                # First check if the player will win that column
                 self.n_neutral_markers += 1
                 if current_position_id == len(cell_list) - 1:
                     if (col, self.player_turn) not in self.player_won_column:
                         self.player_won_column.append((col, self.player_turn))
                 else:
-                    cell_list[current_position_id+1].markers.append(0)
-                    self.neutral_positions.append((col, current_position_id+1))
+                    cell_list[current_position_id + 1].markers.append(0)
+                    self.neutral_positions.append((col, current_position_id + 1))
             # If there's zero    
             else:
-                #First check if the player will win that column
+                # First check if the player will win that column
                 if current_position_zero == len(cell_list) - 1:
                     if (col, self.player_turn) not in self.player_won_column:
                         self.player_won_column.append((col, self.player_turn))
                 else:
                     cell_list[current_position_zero].markers.remove(0)
-                    cell_list[current_position_zero+1].markers.append(0)
+                    cell_list[current_position_zero + 1].markers.append(0)
                     self.neutral_positions.remove((col, current_position_zero))
-                    self.neutral_positions.append((col, current_position_zero+1))
+                    self.neutral_positions.append((col, current_position_zero + 1))
         # Next action should be [y,n]
         self.dice_action = False
         # Then a new dice roll is done (same is done if the player is busted)
         self.current_roll = self.roll_dice()
-
 
     def transform_neutral_markers(self):
         """Transform the neutral markers into player_id markers (1 or 2)."""
@@ -238,7 +237,7 @@ class Game:
             # Remove the previous player_turn id in order to keep only the
             # the furthest one
             col_cell_list = self.board_game.board[neutral[0]]
-            for i in range(neutral[1]-1, -1, -1):
+            for i in range(neutral[1] - 1, -1, -1):
                 if self.player_turn in col_cell_list[i].markers:
                     col_cell_list[i].markers.remove(self.player_turn)
                     break
@@ -254,11 +253,10 @@ class Game:
 
         for column_won in self.player_won_column:
             self.finished_columns.append((column_won[0], column_won[1]))
-        
+
             for cell in self.board_game.board[column_won[0]]:
                 cell.markers.clear()
-                #cell.markers.append(self.player_turn)
-    
+                # cell.markers.append(self.player_turn)
 
         self.player_won_column.clear()
 
@@ -269,7 +267,6 @@ class Game:
 
         self.n_neutral_markers = 0
         self.neutral_positions = []
-
 
     def erase_neutral_markers(self):
         """Remove the neutral markers because the player is busted."""
@@ -282,11 +279,9 @@ class Game:
         self.n_neutral_markers = 0
         self.neutral_positions = []
 
-
     def count_neutral_markers(self):
         """Return the number of neutral markers present in the current board."""
         return self.n_neutral_markers
-
 
     def is_player_busted(self, all_moves):
         """
@@ -297,7 +292,7 @@ class Game:
         """
 
         if all_moves == ['y', 'n']:
-        	return False
+            return False
         if len(all_moves) == 0:
             self.erase_neutral_markers()
             self.player_won_column.clear()
@@ -326,15 +321,13 @@ class Game:
         self.current_roll = self.roll_dice()
         return True
 
-
     def roll_dice(self):
         """Return a tuple with integers representing the dice roll."""
 
         my_list = []
-        for _ in range(0,self.dice_number):
-          my_list.append(random.randrange(1,self.dice_value+1))
+        for _ in range(0, self.dice_number):
+            my_list.append(random.randrange(1, self.dice_value + 1))
         return tuple(my_list)
-
 
     def check_tuple_availability(self, tuple):
         """
@@ -343,7 +336,7 @@ class Game:
         Return a boolean.
         """
 
-        #First check if the column 'value' is already completed
+        # First check if the column 'value' is already completed
         for tuple_finished in self.finished_columns:
             if tuple_finished[0] == tuple[0] or tuple_finished[0] == tuple[1]:
                 return False
@@ -360,7 +353,7 @@ class Game:
         for cell in self.board_game.board[tuple[0]]:
             if 0 in cell.markers:
                 is_first_value_valid = True
-        
+
         for cell in self.board_game.board[tuple[1]]:
             if 0 in cell.markers:
                 is_second_value_valid = True
@@ -384,21 +377,20 @@ class Game:
             else:
                 return False
 
-
     def check_value_availability(self, value):
         """
         Check if there's a neutral marker in the 'value' column.
         Return a boolean. 
         """
 
-        #First check if the column 'value' is already completed
+        # First check if the column 'value' is already completed
         for tuple_finished in self.finished_columns:
             if tuple_finished[0] == value:
                 return False
         for tuple_column in self.player_won_column:
             if tuple_column[0] == value:
                 return False
-        
+
         if self.count_neutral_markers() < 3:
             return True
         list_of_cells = self.board_game.board[value]
@@ -406,7 +398,6 @@ class Game:
             if 0 in cell.markers:
                 return True
         return False
-
 
     def available_moves(self):
         """
@@ -419,13 +410,13 @@ class Game:
         """
 
         if not self.dice_action:
-            return ['y','n']
-        standard_combination = [(self.current_roll[0] + self.current_roll[1], 
-        						self.current_roll[2] + self.current_roll[3]),
-                                (self.current_roll[0] + self.current_roll[2], 
-                                self.current_roll[1] + self.current_roll[3]),
-                                (self.current_roll[0] + self.current_roll[3], 
-                                self.current_roll[1] + self.current_roll[2])]
+            return ['y', 'n']
+        standard_combination = [(self.current_roll[0] + self.current_roll[1],
+                                 self.current_roll[2] + self.current_roll[3]),
+                                (self.current_roll[0] + self.current_roll[2],
+                                 self.current_roll[1] + self.current_roll[3]),
+                                (self.current_roll[0] + self.current_roll[3],
+                                 self.current_roll[1] + self.current_roll[2])]
         combination = []
         for comb in standard_combination:
             first_value_available = self.check_value_availability(comb[0])
@@ -464,7 +455,7 @@ class Game:
         # another 2 columns in one turn.
         if won_columns_player_1 >= 3:
             return 1, True
-        elif  won_columns_player_2 >= 3:
+        elif won_columns_player_2 >= 3:
             return 2, True
         else:
             return 0, False
