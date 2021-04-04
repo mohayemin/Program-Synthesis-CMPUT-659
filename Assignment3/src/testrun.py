@@ -3,10 +3,8 @@ from src.BUSContext import BUSContext
 
 if __name__ == '__main__':
     bus = BUS()
-    result = bus.synthesize(9)
-    sigmaResult = result['sigmaResults']
-    program = sigmaResult.program
-    print(program.toProgramString(), program.size, sigmaResult.win_percent)
+    sigmaZeroResult = bus.synthesize_sigma_zero(9)
+    print(sigmaZeroResult.to_string())
     exit(0)
 
     grammar = BUSContext()
