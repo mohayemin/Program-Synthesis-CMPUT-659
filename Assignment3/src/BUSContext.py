@@ -56,7 +56,9 @@ class BUSContext:
         ]
 
     def grow(self, allowed_size):
-        new_programs = self.grow_binary_operators(allowed_size) + self.grow_list_operators(allowed_size)
+        new_programs = self.grow_binary_operators(allowed_size) + \
+                       self.grow_list_operators(allowed_size) + \
+                       self.grow_map(allowed_size)
         self.add_programs(new_programs)
         print('size ' + str(allowed_size) +
               ', new ' + str(len(new_programs)) +
@@ -75,7 +77,7 @@ class BUSContext:
         new_programs = []
         for binary_operator in self.binary_operators:
             for p1 in self.plist:
-                if p1.size + 1 >= allowed_size:
+                if p1.size + 1 == allowed_size:
                     break
                 if not self.returns_scalar(p1):
                     continue
@@ -88,5 +90,17 @@ class BUSContext:
 
     def grow_map(self, allowed_size) -> list[Node]:
         new_programs = []
+        # with empty list
+        for exp in self.program_by_size[allowed_size - 2]:  # 1 for Func node + 1 for exp
+            new_programs.append(Map(Function(exp), None))
+
+        for exp in self.plist:
+            if exp.size + 1 == allowed_size:
+                break
+            for lst in self.program_by_size[allowed_size - exp.size - 2]:
+                if not self.returns_list(lst):
+                    continue
+                p = Map(Function(exp), lst)
+                new_programs.append(p)
 
         return new_programs

@@ -17,7 +17,10 @@ class Node:
     def toString(self):
         raise Exception('Unimplemented method: toString')
 
-    def interpret(self):
+    def toProgramString(self):
+        raise Exception('Unimplemented method: toProgramString')
+
+    def interpret(self, env):
         raise Exception('Unimplemented method: interpret')
 
     def interpret_local_variables(self, env, x):
@@ -46,6 +49,7 @@ class Node:
 # abstract
 class VarList(Node):
     def __init__(self, name):
+        super(VarList, self).__init__()
         self.name = name
         self.size = 1
 
@@ -54,6 +58,9 @@ class VarList(Node):
 
     def interpret(self, env):
         return env[self.name]
+
+    def toProgramString(self):
+        return f'VarList(\'{self.name}\')'
 
 
 class ActionsVarList(VarList):
@@ -79,6 +86,9 @@ class VarScalarFromArray(Node):
     def interpret(self, env):
         return env[self.name][env[self.local][self.intname]]
 
+    def toProgramString(self):
+        return f'VarScalarFromArray(\'{self.name}\')'
+
 
 class ProgressValueVarScalarFromArray(VarScalarFromArray):
     def __init__(self):
@@ -93,6 +103,7 @@ class MoveValueVarScalarFromArray(VarScalarFromArray):
 # abstract
 class VarScalar(Node):
     def __init__(self, name):
+        super(VarScalar, self).__init__()
         self.name = name
         self.size = 1
 
@@ -102,6 +113,9 @@ class VarScalar(Node):
     def interpret(self, env):
         return env[self.name]
 
+    def toProgramString(self):
+        return f'VarScalar(\'{self.name}\')'
+
 
 class MarkerVarScalar(VarScalar):
     def __init__(self):
@@ -110,6 +124,7 @@ class MarkerVarScalar(VarScalar):
 
 class Constant(Node):
     def __init__(self, value):
+        super(Constant, self).__init__()
         self.value = value
         self.size = 1
 
@@ -118,9 +133,6 @@ class Constant(Node):
 
     def interpret(self, env):
         return self.value
-
-    def grow(plist, new_plist):
-        pass
 
 
 class NumberAdvancedByAction(Node):
@@ -144,6 +156,9 @@ class NumberAdvancedByAction(Node):
         # All other cases will advance only one cell per column
         else:
             return 1
+
+    def toProgramString(self):
+        return 'NumberAdvancedByAction()'
 
 
 class IsNewNeutral(Node):
@@ -169,6 +184,9 @@ class IsNewNeutral(Node):
                 is_new_neutral = False
 
         return is_new_neutral
+
+    def toProgramString(self):
+        return 'IsNewNeutral()'
 
 
 class NumberAdvancedThisRound(Node):
@@ -213,6 +231,9 @@ class NumberAdvancedThisRound(Node):
                     counter += len(list_of_cells) - previously_conquered
         return counter
 
+    def toProgramString(self):
+        return 'NumberAdvancedThisRound()'
+
 
 class Times(Node):
     def __init__(self, left, right):
@@ -228,6 +249,9 @@ class Times(Node):
     def interpret(self, env):
         return self.left.interpret(env) * self.right.interpret(env)
 
+    def toProgramString(self):
+        return f'Times({self.left.toProgramString()}, {self.right.toProgramString()})'
+
 
 class Minus(Node):
     def __init__(self, left, right):
@@ -241,6 +265,9 @@ class Minus(Node):
 
     def interpret(self, env):
         return self.left.interpret(env) - self.right.interpret(env)
+
+    def toProgramString(self):
+        return f'Minus({self.left.toProgramString()}, {self.right.toProgramString()})'
 
 
 class Plus(Node):
@@ -256,6 +283,9 @@ class Plus(Node):
     def interpret(self, env):
         return self.left.interpret(env) + self.right.interpret(env)
 
+    def toProgramString(self):
+        return f'Plus({self.left.toProgramString()}, {self.right.toProgramString()})'
+
 
 class Function(Node):
     def __init__(self, expression):
@@ -268,6 +298,9 @@ class Function(Node):
 
     def interpret(self, env):
         return lambda x: self.expression.interpret_local_variables(env, x)
+
+    def toProgramString(self):
+        return f'Function({self.expression.toProgramString()})'
 
 
 class Argmax(Node):
@@ -282,6 +315,9 @@ class Argmax(Node):
     def interpret(self, env):
         return np.argmax(self.list.interpret(env))
 
+    def toProgramString(self):
+        return f'Argmax({self.list.toProgramString()})'
+
 
 class Sum(Node):
     def __init__(self, l):
@@ -294,6 +330,9 @@ class Sum(Node):
 
     def interpret(self, env):
         return np.sum(self.list.interpret(env))
+
+    def toProgramString(self):
+        return f'Sum({self.list.toProgramString()})'
 
 
 class Map(Node):
@@ -320,3 +359,8 @@ class Map(Node):
             return list(map(self.function.interpret(env), list_var))
 
         return list(map(self.function.interpret(env), self.list.interpret(env)))
+
+    def toProgramString(self):
+        if self.list is None:
+            return f'Map({self.function.toProgramString()}, None)'
+        return f'Map({self.function.toProgramString()}, {self.list.toProgramString()})'
