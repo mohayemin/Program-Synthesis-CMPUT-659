@@ -5,12 +5,11 @@ class BUS:
     def __init__(self, max_depth):
         self.max_depth = max_depth
         self.grammar = Grammar()
-        self.program_by_size = [[] for _ in range(max_depth)]
+        self.program_by_size = [[] for _ in range(max_depth + 1)]
         self.plist = []
         self.add_programs(self.grammar.initial_programs())
         self._current_depth = 1
         self._current_program_index = 0
-        pass
 
     def total_programs(self):
         return len(self.plist)

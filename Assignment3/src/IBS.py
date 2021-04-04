@@ -16,7 +16,7 @@ class IBS:
             if sigma0_result.is_reasonable:
                 sigma0_result.programs_evaluated = p_count
                 sigma0_result.programs_generated = self.program_generator.total_programs()
-                sigma0_result.execution_time_sec = 1  # time.time() - start_time
+                sigma0_result.execution_time_sec = -1  # time.time() - start_time
                 return sigma0_result
 
         return None

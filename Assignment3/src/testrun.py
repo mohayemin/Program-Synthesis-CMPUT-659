@@ -8,3 +8,9 @@ if __name__ == '__main__':
     print(sigmaZeroResult.to_string())
     exit(0)
 
+    # count = 0
+    # while bus.has_next():
+    #     bus.next()
+    #     count += 1
+    #
+    # print(count)
