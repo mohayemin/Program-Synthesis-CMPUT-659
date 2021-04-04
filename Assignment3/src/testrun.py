@@ -1,6 +1,14 @@
+from src.BUS import BUS
 from src.BUSContext import BUSContext
 
 if __name__ == '__main__':
+    bus = BUS()
+    result = bus.synthesize(9)
+    sigmaResult = result['sigmaResults']
+    program = sigmaResult.program
+    print(program.toProgramString(), program.size, sigmaResult.win_percent)
+    exit(0)
+
     grammar = BUSContext()
     n = 9
     for i in range(1, n + 1):
