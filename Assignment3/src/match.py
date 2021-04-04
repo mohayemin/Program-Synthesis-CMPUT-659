@@ -37,7 +37,6 @@ def play_match(p1, p2):
             return is_over, who_won
 
         if number_of_moves >= 300:
-            print('Draw!')
             return False, None
 
 
