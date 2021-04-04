@@ -1,47 +1,35 @@
-import time
-
 from src.match import *
-from src.rule_of_28_sketch import Rule_of_28_Player_PS
 
 
 class BUS:
-    def __init__(self):
+    def __init__(self, max_depth):
+        self.max_depth = max_depth
         self.grammar = Grammar()
-        self.program_by_size = [[] for _ in range(10)]
+        self.program_by_size = [[] for _ in range(max_depth)]
         self.plist = []
         self.add_programs(self.grammar.initial_programs())
-        _next_index = 0
+        self._current_depth = 1
+        self._current_program_index = 0
         pass
+
+    def total_programs(self):
+        return len(self.plist)
+
+    def has_next(self):
+        if self._current_depth < self.max_depth:
+            return True
+        if self._current_program_index < len(self.plist) - 1:
+            return True
+
+        return False
 
     def next(self):
+        self._current_program_index += 1
+        if self._current_program_index == len(self.plist):
+            self._current_depth += 1
+            self.grow(self._current_depth)
 
-        pass
-
-    def synthesize_sigma_zero(self, search_size):
-        start_time = time.time()
-
-        for i in range(1, search_size):
-            for program in self.program_by_size[i]:
-                sigma0_result = self.is_reasonable_signa_0(program)
-                print(sigma0_result.program.toProgramString(), sigma0_result.win_percent)
-                if sigma0_result.is_reasonable:
-                    sigma0_result.programs_generated = len(self.plist)
-                    sigma0_result.execution_time_sec = time.time() - start_time
-                    return sigma0_result
-
-            self.grow(i + 1)
-
-        return None
-
-    @staticmethod
-    def is_reasonable_signa_0(program):
-        argmax = Argmax(program)
-        player = Rule_of_28_Player_PS(default_yes_no_program(), argmax)
-        try:
-            victories1, victories2 = play_2n_matches(player, player, 50)
-            return Sigma0Results(argmax, victories1, victories2)
-        except Exception:
-            return Sigma0Results(argmax, 0, 0)
+        return self.plist[self._current_program_index]
 
     def add_programs(self, programs):
         for p in programs:
@@ -61,12 +49,15 @@ class BUS:
             IsNewNeutral()
         ]
 
-    def grow(self, allowed_size):
-        new_programs = self.grow_binary_operators(allowed_size) + \
-                       self.grow_list_operators(allowed_size) + \
-                       self.grow_map(allowed_size)
+    def grow(self, depth):
+        if depth > self.max_depth:
+            return
+
+        new_programs = self.grow_binary_operators(depth) + \
+                       self.grow_list_operators(depth) + \
+                       self.grow_map(depth)
         self.add_programs(new_programs)
-        print('size ' + str(allowed_size) +
+        print('size ' + str(depth) +
               ', new ' + str(len(new_programs)) +
               ', total ' + str(len(self.plist)))
 
@@ -110,25 +101,6 @@ class BUS:
                 new_programs.append(p)
 
         return new_programs
-
-
-class Sigma0Results:
-    programs_generated = -1
-    execution_time_sec = -1
-
-    def __init__(self, program, victories1, victories2):
-        self.program = program
-        self.total_victory = victories1 + victories2
-        self.is_reasonable = self.total_victory >= 60
-        self.victories1 = victories1
-        self.victories2 = victories2
-        self.win_percent = self.total_victory / 100
-
-    def to_string(self):
-        return f'program: {self.program.toProgramString()}\n' \
-               f'win percent: {self.win_percent}%\n' \
-               f'programs evaluated: {self.programs_generated}\n' \
-               f'execution time: {self.execution_time_sec:.2f}s'
 
 
 class Grammar:
