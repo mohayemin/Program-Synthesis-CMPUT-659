@@ -1,11 +1,11 @@
 from src.BUS import BUS
-from src.IBS import IBS
+from src.IBR import IBR
 
 if __name__ == '__main__':
     bus = BUS(9)
-    ibs = IBS(bus)
-    sigmaZeroResult = ibs.synthesize_sigma_zero()
-    print(sigmaZeroResult.to_string())
+    ibr = IBR(bus)
+    sigmaZeroResult = ibr.synthesize()
+    # print(sigmaZeroResult.to_string())
     exit(0)
 
     # count = 0

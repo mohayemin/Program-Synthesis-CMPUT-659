@@ -22,7 +22,7 @@ class BUS:
 
         return False
 
-    def next(self):
+    def next(self) -> Node:
         self._current_program_index += 1
         if self._current_program_index == len(self.plist):
             self._current_depth += 1
