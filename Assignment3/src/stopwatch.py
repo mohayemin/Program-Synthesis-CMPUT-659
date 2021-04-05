@@ -14,6 +14,9 @@ class Stopwatch:
     def elapsed(self):
         return time.time() - self.start_time
 
+    def elapsed_str(self):
+        return f'{self.elapsed():.0f}s'
+
     def threshold_crossed(self):
         if self.elapsed() >= self._next_threshold:
             self._next_threshold = self.elapsed() + self._interval
