@@ -2,14 +2,17 @@ from src.match import *
 
 
 class BUS:
-    def __init__(self, max_depth):
-        self.max_depth = max_depth
+    def __init__(self, max_level):
+        self.max_level = max_level
         self.grammar = Grammar()
-        self.program_by_size = [[] for _ in range(max_depth + 1)]
+        self.program_by_size = [[] for _ in range(max_level + 1)]
         self.plist = []
         self.add_programs(self.grammar.initial_programs())
-        self._current_depth = 1
+        self._current_level = 1
         self._current_program_index = 0
+
+    def current_level(self):
+        return self._current_level
 
     def total_generated(self):
         return len(self.plist)
@@ -18,7 +21,7 @@ class BUS:
         return self._current_program_index
 
     def has_next(self):
-        if self._current_depth < self.max_depth:
+        if self._current_level < self.max_level:
             return True
         if self._current_program_index < len(self.plist) - 1:
             return True
@@ -28,8 +31,8 @@ class BUS:
     def next(self) -> Node:
         self._current_program_index += 1
         if self._current_program_index == len(self.plist):
-            self._current_depth += 1
-            self.grow(self._current_depth)
+            self._current_level += 1
+            self.grow(self._current_level)
 
         return self.plist[self._current_program_index]
 
@@ -52,7 +55,7 @@ class BUS:
         ]
 
     def grow(self, depth):
-        if depth > self.max_depth:
+        if depth > self.max_level:
             return
 
         new_programs = self.grow_map(depth) + \

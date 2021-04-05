@@ -1,4 +1,4 @@
-from src.GameResults import GameResults
+from src.GameResults import GameResults, percent
 from src.match import *
 from src.rule_of_28_sketch import Rule_of_28_Player_PS
 from src.stopwatch import stopwatch
@@ -27,9 +27,12 @@ class IBR:
         # recursion throws StackOverflow, therefore loop
         while self.program_generator.has_next():
             if stopwatch.threshold_crossed():
+                processed = self.program_generator.total_processed()
+                generated = self.program_generator.total_generated()
+                level = self.program_generator.current_level()
                 print(f'{stopwatch.elapsed():.2f}s passed, '
-                      f'{self.program_generator.total_generated()} programs generated, '
-                      f'{self.program_generator.total_processed()} programs processed')
+                      f'{processed}/{generated} ({percent(processed,generated)}%) '
+                      f'programs processed at level {level}')
 
             candidate_program = self.program_generator.next()
             result = GameResults(candidate_program, opponent_program, 0, 0, 0, 0)
@@ -47,10 +50,7 @@ class IBR:
     def play_triage(self, triage, me, opponent, last_result):
         result = last_result + self.play(me, opponent, triage.matches, triage.target_win_percent)
 
-        def should_print():
-            return (triage.print_success and result.target_passed) or (triage.print_fail and not result.target_passed)
-
-        if should_print():
+        if triage.is_loggable:
             print(me.toProgramString())
             message = ':) PASSED' if result.target_passed else ':( FAILED'
             print(f'  {message} level {triage.level} of triage with '
