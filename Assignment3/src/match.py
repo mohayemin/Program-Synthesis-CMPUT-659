@@ -1,8 +1,13 @@
 from DSL import *
 from game import Game
 
+grand_total_matches = 0
+
 
 def play_match(p1, p2):
+    global grand_total_matches
+    grand_total_matches += 1
+
     game = Game(n_players=2, dice_number=4, dice_value=6, column_range=[2, 12],
                 offset=2, initial_height=3)
 
@@ -69,4 +74,3 @@ def play_2n_matches(p1, p2, n):
 def default_yes_no_program():
     return Sum(Map(Function(Times(Plus(NumberAdvancedThisRound(), Constant(1)), VarScalarFromArray('progress_value'))),
                    VarList('neutrals')))
-

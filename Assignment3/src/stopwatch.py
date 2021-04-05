@@ -4,7 +4,7 @@ import time
 class Stopwatch:
     start_time = -1
     _interval = 30
-    _next_threshold = 60
+    _next_threshold = 0
 
     def start(self):
         self.start_time = time.time()

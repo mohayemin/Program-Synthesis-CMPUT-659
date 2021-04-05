@@ -2,22 +2,25 @@ from src.BUS import BUS
 from src.GameResults import percent
 from src.IBR import IBR
 from src.Triage import create_triage_list
+from src.match import grand_total_matches
 from src.stopwatch import stopwatch
 
 if __name__ == '__main__':
     bus = BUS(9)
 
-    five_triages = create_triage_list([10, 50, 250, 500, 1000], [20, 35, 45, 55, 55], 10, 3)
-    given_triage = create_triage_list([10, 200, 1000], [20, 55, 55], 10, 2)
-    simple_triages = create_triage_list([10, 100], [20, 40], 3, 3)
+    five_triages = create_triage_list([10, 50, 250, 500, 1000], [20, 35, 45, 55, 55], 3)
+    given_triage = create_triage_list([10, 200, 1000], [20, 55, 55], 2)
+    simple_triages = create_triage_list([10, 100], [20, 40], 3)
 
-    ibr = IBR(bus, five_triages)
+    ibr = IBR(bus, given_triage)
 
     print('start synthesis for the following triages')
     for triage in ibr.triages:
         print(triage)
 
+    stopwatch.start()
     best_responses = ibr.synthesize()
+    total_time = stopwatch.elapsed()
 
     print('\n\n========= Search Complete =========')
     for br in best_responses:
@@ -25,13 +28,9 @@ if __name__ == '__main__':
         print(br)
 
     print()
-    print(f'programs generated: {bus.total_generated()}')
-    print(f'programs processed: {bus.total_processed()} ({percent(bus.total_processed(), bus.total_generated()):.2f}%)')
-    print(f'Total Time {stopwatch.elapsed():.2f}s')
-
-    # count = 0
-    # while bus.has_next():
-    #     bus.next()
-    #     count += 1
-    #
-    # print(count)
+    print(f'programs generated     : {bus.total_generated()}')
+    print(f'programs processed     : {bus.total_processed()} '
+          f'({percent(bus.total_processed(), bus.total_generated()):.2f}%)')
+    print(f'matches played         : {grand_total_matches}')
+    print(f'Total Time             : {total_time:.2f}s')
+    print(f'{bus.total_processed()/total_time} programs per second')
