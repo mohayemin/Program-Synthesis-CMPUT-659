@@ -19,7 +19,7 @@ class IBR:
         for i in range(1, self.iteration_count):
             sigma_i = self.find_best_response(best_responses[i - 1].me)
             best_responses.append(sigma_i)
-            print(f'found sigma {i}: {best_responses[i].me}')
+            print(f'found sigma {i}: {sigma_i.me}')
 
         return best_responses
 
