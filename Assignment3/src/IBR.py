@@ -16,7 +16,9 @@ class IBR:
 
         print(f'found sigma 0: {best_responses[0].me}')
 
-        for i in range(1, self.iteration_count):
+        i = 0
+        while self.program_generator.has_next():
+            i += 1
             sigma_i = self.find_best_response(best_responses[i - 1].me)
             best_responses.append(sigma_i)
             print(f'found sigma {i}: {sigma_i.me}')
@@ -30,9 +32,9 @@ class IBR:
             level = self.program_generator.current_level()
             elapsed = stopwatch.elapsed()
             print(f'Time: {elapsed:.0f}s, '
-                  f'processed {processed}/{generated} ({percent(processed,generated):.0f}%), '
+                  f'processed {processed}/{generated} ({percent(processed, generated):.0f}%), '
                   f'BUS level {level}, '
-                  f'{processed/elapsed:.2f} programs per second')
+                  f'{processed / elapsed:.2f} programs per second')
 
     def find_best_response(self, opponent_program) -> GameResults:
         # recursion throws StackOverflow, therefore loop
