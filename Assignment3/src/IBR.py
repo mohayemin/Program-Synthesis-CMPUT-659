@@ -50,7 +50,7 @@ class IBR:
         def should_print():
             return (triage.print_success and result.target_passed) or (triage.print_fail and not result.target_passed)
 
-        if should_print:
+        if should_print():
             print(me.toProgramString())
             message = 'PASSED' if result.target_passed else 'FAILED'
             print(f'  :) {message} level {triage.level} of triage with '

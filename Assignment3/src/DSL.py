@@ -45,6 +45,9 @@ class Node:
     def className(cls):
         return cls.__name__
 
+    def __str__(self):
+        return self.toProgramString()
+
 
 # abstract
 class VarList(Node):
@@ -317,9 +320,6 @@ class Argmax(Node):
 
     def toProgramString(self):
         return f'Argmax({self.list.toProgramString()})'
-
-    def __str__(self):
-        return self.toProgramString()
 
 
 class Sum(Node):
