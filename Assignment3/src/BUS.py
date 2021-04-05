@@ -59,9 +59,9 @@ class BUS:
                        self.grow_list_operators(depth) + \
                        self.grow_map(depth)
         self.add_programs(new_programs)
-        print('\nGrown to size ' + str(depth) +
+        print('Grown to size ' + str(depth) +
               ', new ' + str(len(new_programs)) +
-              ', total ' + str(len(self.plist)) + '\n')
+              ', total ' + str(len(self.plist)))
 
     def grow_list_operators(self, allowed_size) -> list[Node]:
         new_programs = []

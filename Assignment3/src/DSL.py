@@ -318,6 +318,9 @@ class Argmax(Node):
     def toProgramString(self):
         return f'Argmax({self.list.toProgramString()})'
 
+    def __str__(self):
+        return self.toProgramString()
+
 
 class Sum(Node):
     def __init__(self, l):

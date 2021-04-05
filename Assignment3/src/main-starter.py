@@ -6,8 +6,8 @@ from src.random_player import RandomPlayer
 from src.rule_of_28_sketch import Rule_of_28_Player_PS
 
 if __name__ == "__main__":
-    # Given by Levi Argmax(Map(Function(Sum(Map(Function(Plus(VarScalarFromArray('move_value'),
-    # NumberAdvancedByAction())), None))), VarList('actions')))
+    # My  : Map(Function(Sum(Map(Function(Map(Function(VarScalarFromArray('move_value')), None)), None))), VarList('actions'))
+    # Levi: Argmax(Map(Function(Sum(Map(Function(Plus(VarScalarFromArray('move_value'), NumberAdvancedByAction())), None))), VarList('actions')))
     program_decide_column = Argmax(Map(Function(Sum(Map(Function(
         Minus(Times(NumberAdvancedByAction(), VarScalarFromArray('move_value')),
               Times(VarScalar('marker'), IsNewNeutral()))), None))), VarList('actions')))

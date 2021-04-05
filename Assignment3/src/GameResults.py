@@ -14,6 +14,7 @@ class GameResults:
         self.my_win_percent = percent(my_wins, total_matches)
         self.my_win_percent_in_finished_games = percent(my_wins, my_wins + opponent_wins)
         self.is_same_player = me == opponent
+        self.target_win_percent = target_win_percent
         self.target_passed = self.my_win_percent >= target_win_percent
 
     def __str__(self):
@@ -23,7 +24,7 @@ class GameResults:
         else:
             return f'me: {self.me.toProgramString()}\n' \
                    f'opponent: {self.opponent.toProgramString()}\n' \
-                   f'completion percent: {self.finish_percent:2.2f}%'
+                   f'win percent: {self.my_win_percent:2.2f}%'
 
     def __add__(self, other):
         if (self.me != other.me) or (self.opponent != other.opponent):
