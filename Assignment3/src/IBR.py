@@ -37,8 +37,6 @@ class IBR:
     def find_best_response(self, opponent_program) -> GameResults:
         # recursion throws StackOverflow, therefore loop
         while self.program_generator.has_next():
-            self.print_update()
-
             candidate_program = self.program_generator.next()
             result = GameResults(candidate_program, opponent_program, 0, 0, 0, 0)
 
@@ -73,6 +71,8 @@ class IBR:
         return None
 
     def play(self, me, opponent, n, target_win_percent):
+        self.print_update()
+
         my_player = Rule_of_28_Player_PS(default_yes_no_program(), Argmax(me))
         opponent_player = Rule_of_28_Player_PS(default_yes_no_program(), Argmax(opponent))
 
