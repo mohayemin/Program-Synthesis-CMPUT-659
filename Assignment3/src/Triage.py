@@ -7,7 +7,7 @@ class Triage:
         self.print_fail = print_fail
 
     def __str__(self):
-        return f'({self.level}, {self.matches}, {self.target_win_percent})'
+        return f'matches: {self.matches}, goal: {self.target_win_percent}%'
 
 
 def create_triage_list(match_boundaries, target_win_percents, start_print_success=0, start_print_error=1):
