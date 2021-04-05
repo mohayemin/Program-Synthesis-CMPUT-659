@@ -45,11 +45,12 @@ def play_match(p1, p2):
             return False, None
 
 
-def play_2n_matches(p1, p2, n):
+def play_n_matches(p1, p2, n):
+    half_n = int(n / 2)
     p1_victories = 0
     p2_victories = 0
 
-    for _ in range(n):
+    for _ in range(half_n):
         # plays a match with br as player 1
         finished, who_won = play_match(p1, p2)
 
@@ -69,6 +70,46 @@ def play_2n_matches(p1, p2, n):
                 p1_victories += 1
 
     return p1_victories, p2_victories
+
+
+def play_n_matches_with_early_exit(p1, p2, n, target_win_percent):
+    half_n = int(n / 2)
+    wins_required_to_exit = int(n * target_win_percent / 100)
+    non_wins_required_to_exit = n - wins_required_to_exit
+
+    p1_victories = 0
+    p2_victories = 0
+    draws = 0
+
+    for i in range(half_n):
+        # plays a match with br as player 1
+        finished, who_won = play_match(p1, p2)
+
+        if finished:
+            if who_won == 1:
+                p1_victories += 1
+            else:
+                p2_victories += 1
+        else:
+            draws += 1
+
+        # plays another match with br as player 2
+        finished, who_won = play_match(p2, p1)
+
+        if finished:
+            if who_won == 1:
+                p2_victories += 1
+            else:
+                p1_victories += 1
+        else:
+            draws += 1
+
+        if p1_victories > wins_required_to_exit:
+            break
+        if draws + p2_victories > non_wins_required_to_exit:
+            break
+
+    return p1_victories, p2_victories, p1_victories + p2_victories + draws
 
 
 def default_yes_no_program():

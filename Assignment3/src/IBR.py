@@ -1,36 +1,35 @@
 from src.GameResults import GameResults, percent
 from src.match import *
 from src.rule_of_28_sketch import Rule_of_28_Player_PS
-from src.stopwatch import stopwatch
 
 
 class IBR:
-    def __init__(self, program_generator, triages):
+    def __init__(self, stopwatch, program_generator, triages):
+        self.stopwatch = stopwatch
         self.program_generator = program_generator
         self.triages = triages
-        self.iteration_count = 5
 
     def synthesize(self) -> list[GameResults]:
         sigma_0 = self.synthesize_sigma_zero()
         best_responses = [sigma_0]
 
-        print(f'found sigma 0: {best_responses[0].me}')
+        print(f'found sigma 0: {best_responses[0].me} in {self.stopwatch.elapsed():.0f}s')
 
         i = 0
         while self.program_generator.has_next():
             i += 1
             sigma_i = self.find_best_response(best_responses[i - 1].me)
             best_responses.append(sigma_i)
-            print(f'found sigma {i}: {sigma_i.me}')
+            print(f'found sigma {i}: {sigma_i.me} in {self.stopwatch.elapsed():.0f}s')
 
         return best_responses
 
     def print_update(self):
-        if stopwatch.threshold_crossed():
+        if self.stopwatch.threshold_crossed():
             processed = self.program_generator.total_processed()
             generated = self.program_generator.total_generated()
             level = self.program_generator.current_level()
-            elapsed = stopwatch.elapsed()
+            elapsed = self.stopwatch.elapsed()
             print(f'Time: {elapsed:.0f}s, '
                   f'processed {processed}/{generated} ({percent(processed, generated):.0f}%), '
                   f'BUS level {level}, '
@@ -39,6 +38,8 @@ class IBR:
     def find_best_response(self, opponent_program) -> GameResults:
         # recursion throws StackOverflow, therefore loop
         while self.program_generator.has_next():
+            self.print_update()
+            # print(self.program_generator.total_processed(), self.stopwatch.elapsed())
             candidate_program = self.program_generator.next()
             result = GameResults(candidate_program, opponent_program, 0, 0, 0, 0)
 
@@ -66,20 +67,24 @@ class IBR:
     def synthesize_sigma_zero(self) -> GameResults:
         while self.program_generator.has_next():
             program = self.program_generator.next()
-            sigma0_result = self.play(program, program, 100, 0)
+            player = Rule_of_28_Player_PS(default_yes_no_program(), Argmax(program))
+            try:
+                v1, v2 = play_n_matches(player, player, 100)
+            except:
+                continue
+
+            sigma0_result = GameResults(program, program, v1, v2, 100, 0)
             if sigma0_result.finish_percent >= 60:
                 return sigma0_result
 
         return None
 
     def play(self, me, opponent, n, target_win_percent):
-        self.print_update()
-
         my_player = Rule_of_28_Player_PS(default_yes_no_program(), Argmax(me))
         opponent_player = Rule_of_28_Player_PS(default_yes_no_program(), Argmax(opponent))
 
         try:
-            v1, v2 = play_2n_matches(my_player, opponent_player, int(n / 2))
-            return GameResults(me, opponent, v1, v2, n, target_win_percent)
+            v1, v2, total = play_n_matches_with_early_exit(my_player, opponent_player, n, target_win_percent)
+            return GameResults(me, opponent, v1, v2, total, target_win_percent)
         except:
             return GameResults(me, opponent, 0, 0, n, target_win_percent)
