@@ -81,11 +81,11 @@ class BUS:
             for p1 in self.plist:
                 if p1.size + 1 == allowed_size:
                     break
-                if not self.grammar.returns_scalar(p1):
+                if not self.grammar.is_binary_operable(p1):
                     continue
 
                 for p2 in self.program_by_size[allowed_size - p1.size - 1]:
-                    if not self.grammar.returns_scalar(p2):
+                    if not self.grammar.is_binary_operable(p2):
                         continue
                     new_programs.append(binary_operator(p1, p2))
         return new_programs
@@ -109,21 +109,15 @@ class BUS:
 
 
 class Grammar:
-    scalar_returners = frozenset(map(lambda op: op.__name__, [
-        Times,
-        Plus,
-        Minus,
-        Argmax,
-        Sum,
+    can_binary_operated = frozenset(map(lambda op: op.__name__, [
         NumberAdvancedByAction,
         IsNewNeutral,
         NumberAdvancedThisRound,
         ProgressValueVarScalarFromArray,
         MoveValueVarScalarFromArray,
-        MarkerVarScalar,
     ]))
 
-    list_returners = frozenset(map(lambda op: op.__name__, [
+    can_list_operated = frozenset(map(lambda op: op.__name__, [
         Map,
         ActionsVarList,
         NeutralsVarList,
@@ -144,8 +138,8 @@ class Grammar:
             IsNewNeutral()
         ]
 
-    def returns_scalar(self, program):
-        return type(program).__name__ in self.scalar_returners
+    def is_binary_operable(self, program):
+        return type(program).__name__ in self.can_binary_operated
 
     def returns_list(self, program):
-        return type(program).__name__ in self.list_returners
+        return type(program).__name__ in self.can_list_operated

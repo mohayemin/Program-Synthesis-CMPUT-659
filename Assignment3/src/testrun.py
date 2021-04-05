@@ -9,7 +9,11 @@ from src.stopwatch import Stopwatch
 
 if __name__ == '__main__':
     bus = BUS(9)
-
+    # while bus.has_next():
+    #     p = bus.next()
+    #     print(p)
+    #
+    # exit(0)
     five_triages = create_triage_list([10, 50, 250, 500, 1000], [20, 35, 50, 55, 55], 3)
     given_triage = create_triage_list([10, 200, 1000], [20, 55, 55], 2)
     simple_triages = create_triage_list([10], [60], 3)
@@ -19,7 +23,7 @@ if __name__ == '__main__':
     stopwatch = Stopwatch()
     # change the triage below to see the differences
     # use no_triage to run without a triage
-    ibr = IBR(stopwatch, bus, second_simple_triage)
+    ibr = IBR(stopwatch, bus, given_triage)
 
     print(f'start synthesis for the following triages at {strftime("%H:%M:%S", localtime())}')
     for triage in ibr.triages:

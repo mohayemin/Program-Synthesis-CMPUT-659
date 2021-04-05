@@ -25,13 +25,13 @@ class IBR:
 
         return best_responses
 
-    def print_update(self):
+    def print_update(self, force = False):
         processed = self.program_generator.total_processed()
-        if processed % 1000 == 0:
+        if force or processed % 100 == 0:
             generated = self.program_generator.total_generated()
             print(f'processed {processed}/{generated} ({percent(processed, generated):.0f}%), '
                   f'BUS level {self.program_generator.current_level()}/{self.program_generator.max_level}')
-            if processed % 10000 == 0:
+            if force or processed % 1000 == 0:
                 print(f'{self.stopwatch.elapsed_str()}, {processed / self.stopwatch.elapsed():.2f} programs/second')
 
     def find_best_response(self, opponent_program) -> GameResults:
