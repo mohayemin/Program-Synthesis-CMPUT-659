@@ -11,8 +11,11 @@ class BUS:
         self._current_depth = 1
         self._current_program_index = 0
 
-    def total_programs(self):
+    def total_generated(self):
         return len(self.plist)
+
+    def total_processed(self):
+        return self._current_program_index
 
     def has_next(self):
         if self._current_depth < self.max_depth:
@@ -56,9 +59,9 @@ class BUS:
                        self.grow_list_operators(depth) + \
                        self.grow_map(depth)
         self.add_programs(new_programs)
-        print('size ' + str(depth) +
+        print('\nGrown to size ' + str(depth) +
               ', new ' + str(len(new_programs)) +
-              ', total ' + str(len(self.plist)))
+              ', total ' + str(len(self.plist)) + '\n')
 
     def grow_list_operators(self, allowed_size) -> list[Node]:
         new_programs = []

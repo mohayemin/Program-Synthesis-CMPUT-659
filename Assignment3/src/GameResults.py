@@ -1,8 +1,9 @@
-from src.IBR import percent
+def percent(num, of):
+    return of if of == 0 else 100 * num / of
 
 
 class GameResults:
-    def __init__(self, me, opponent, my_wins, opponent_wins, total_matches):
+    def __init__(self, me, opponent, my_wins, opponent_wins, total_matches, target_win_percent):
         self.me = me
         self.opponent = opponent
         self.my_wins = my_wins
@@ -13,6 +14,7 @@ class GameResults:
         self.my_win_percent = percent(my_wins, total_matches)
         self.my_win_percent_in_finished_games = percent(my_wins, my_wins + opponent_wins)
         self.is_same_player = me == opponent
+        self.target_passed = self.my_win_percent >= target_win_percent
 
     def __str__(self):
         if self.is_same_player:
@@ -31,5 +33,6 @@ class GameResults:
                            self.opponent,
                            self.my_wins + other.my_wins,
                            self.opponent_wins + other.opponent_wins,
-                           self.total_matches + other.total_matches
+                           self.total_matches + other.total_matches,
+                           other.target_win_percent
                            )
