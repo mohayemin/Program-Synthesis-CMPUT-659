@@ -58,9 +58,9 @@ class BUS:
         if depth > self.max_level:
             return
 
-        new_programs = self.grow_map(depth) + \
+        new_programs = self.grow_binary_operators(depth) + \
                        self.grow_list_operators(depth) + \
-                       self.grow_binary_operators(depth)
+                       self.grow_map(depth)
         self.add_programs(new_programs)
         print('Grown to size ' + str(depth) +
               ', new ' + str(len(new_programs)) +
