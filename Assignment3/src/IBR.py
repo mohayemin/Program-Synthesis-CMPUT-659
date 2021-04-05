@@ -52,8 +52,8 @@ class IBR:
 
         if should_print():
             print(me.toProgramString())
-            message = 'PASSED' if result.target_passed else 'FAILED'
-            print(f'  :) {message} level {triage.level} of triage with '
+            message = ':) PASSED' if result.target_passed else ':( FAILED'
+            print(f'  {message} level {triage.level} of triage with '
                   f'{result.my_wins}/{result.total_matches} ({result.my_win_percent:2.2f}%) wins')
 
         return result

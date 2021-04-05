@@ -11,7 +11,7 @@ if __name__ == '__main__':
     given_triage = create_triage_list([10, 200, 1000], [20, 55, 55], 10, 2)
     simple_triages = create_triage_list([10, 100], [20, 40], 3, 3)
 
-    ibr = IBR(bus, simple_triages)
+    ibr = IBR(bus, five_triages)
     best_responses = ibr.synthesize()
 
     print('\n\n========= Search Complete =========')
