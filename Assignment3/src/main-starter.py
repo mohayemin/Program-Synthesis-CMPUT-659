@@ -22,7 +22,8 @@ if __name__ == "__main__":
     p2 = Rule_of_28_Player_PS(default_yes_no_program(), sigmax)
 
     start = time.time()
-    victories1, victories2 = play_n_matches_with_early_exit(p1, p2, 1000, 90)
+
+    victories1, victories2 = play_n_matches(p1, p2, 1000)
 
     end = time.time()
     print(victories1, victories2, 1000 - victories1 - victories2)
