@@ -8,12 +8,13 @@ class IBR:
         self.stopwatch = stopwatch
         self.program_generator = program_generator
         self.triages = triages
+        self.evaluated_program_count = 0
 
     def synthesize(self) -> list[GameResults]:
         sigma_0 = self.synthesize_sigma_zero()
         best_responses = [sigma_0]
 
-        print(f'found sigma 0: {best_responses[0].me} in {self.stopwatch.elapsed_str()}')
+        print(f'  Found sigma 0')
 
         i = 0
         while self.program_generator.has_next() and i < 5:
@@ -21,24 +22,28 @@ class IBR:
             sigma_i = self.find_best_response(best_responses[i - 1].me)
             if sigma_i is not None:
                 best_responses.append(sigma_i)
-                print(f'found sigma {i}: {sigma_i.me} in {self.stopwatch.elapsed_str()}')
+                print(f'  Found sigma {i}')
 
         return best_responses
 
-    def print_update(self, force = False):
+    def print_update(self, program):
         processed = self.program_generator.total_processed()
-        if force or processed % 100 == 0:
-            generated = self.program_generator.total_generated()
-            print(f'processed {processed}/{generated} ({percent(processed, generated):.0f}%), '
-                  f'BUS level {self.program_generator.current_level()}/{self.program_generator.max_level}')
-            if force or processed % 1000 == 0:
-                print(f'{self.stopwatch.elapsed_str()}, {processed / self.stopwatch.elapsed():.2f} programs/second')
+        generated = self.program_generator.total_generated()
+        print(f'{self.stopwatch.elapsed_str()} | '
+              f'processed {processed}/{generated} ({percent(processed, generated):.0f}%) | '
+              f'BUS level {self.program_generator.current_level()}/{self.program_generator.max_level} | '
+              f'{processed / self.stopwatch.elapsed():.2f} programs/second | '
+              f'{program}')
 
     def find_best_response(self, opponent_program) -> GameResults:
         # recursion throws StackOverflow, therefore loop
         while self.program_generator.has_next():
-            self.print_update()
             candidate_program = self.program_generator.next()
+            self.print_update(candidate_program)
+            if not self.program_generator.grammar.is_evaluable(candidate_program):
+                continue
+
+            self.evaluated_program_count += 1
             result = GameResults(candidate_program, opponent_program, 0, 0, 0, 0)
 
             for triage in self.triages:
@@ -55,7 +60,6 @@ class IBR:
         result = last_result + self.play(me, opponent, triage.matches, triage.target_win_percent)
 
         if triage.is_loggable:
-            print(me.toProgramString())
             message = ':) PASSED' if result.target_passed else ':( FAILED'
             print(f'  {message} level {triage.level} of triage with '
                   f'{result.my_wins}/{result.total_matches} ({result.my_win_percent:2.2f}%) wins, '

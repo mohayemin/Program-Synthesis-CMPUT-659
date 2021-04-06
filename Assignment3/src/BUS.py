@@ -58,9 +58,9 @@ class BUS:
         if depth > self.max_level:
             return
 
-        new_programs = self.grow_binary_operators(depth) + \
+        new_programs = self.grow_map(depth) + \
                        self.grow_list_operators(depth) + \
-                       self.grow_map(depth)
+                       self.grow_binary_operators(depth)
         self.add_programs(new_programs)
         print('Grown to size ' + str(depth) +
               ', new ' + str(len(new_programs)) +
@@ -132,7 +132,6 @@ class Grammar:
             NeutralsVarList(),
             ProgressValueVarScalarFromArray(),
             MoveValueVarScalarFromArray(),
-            # MarkerVarScalar(),
             NumberAdvancedThisRound(),
             NumberAdvancedByAction(),
             IsNewNeutral()
@@ -140,6 +139,9 @@ class Grammar:
 
     def is_binary_operable(self, program):
         return type(program).__name__ in self.can_binary_operated
+
+    def is_evaluable(self, program):
+        return type(program).__name__ in self.can_list_operated
 
     def returns_list(self, program):
         return type(program).__name__ in self.can_list_operated

@@ -4,15 +4,13 @@ from src.BUS import BUS
 from src.GameResults import percent
 from src.IBR import IBR
 from src.Triage import create_triage_list
-from src.match import grand_total_matches
 from src.stopwatch import Stopwatch
 
 if __name__ == '__main__':
     bus = BUS(9)
     # while bus.has_next():
     #     p = bus.next()
-    #     print(p)
-    #
+    #     print(bus.total_processed(), p)
     # exit(0)
     five_triages = create_triage_list([10, 50, 250, 500, 1000], [20, 35, 50, 55, 55], 3)
     given_triage = create_triage_list([10, 200, 1000], [20, 55, 55], 2)
@@ -40,8 +38,7 @@ if __name__ == '__main__':
 
     print()
     print(f'programs generated     : {bus.total_generated()}')
-    print(f'programs processed     : {bus.total_processed()} '
-          f'({percent(bus.total_processed(), bus.total_generated()):.2f}%)')
-    print(f'matches played         : {grand_total_matches}')
+    print(f'programs evaluated     : {ibr.evaluated_program_count} '
+          f'({percent(ibr.evaluated_program_count, bus.total_generated()):.2f}%)')
     print(f'Total Time             : {total_time:.2f}s')
     print(f'{bus.total_processed()/total_time} programs per second')
