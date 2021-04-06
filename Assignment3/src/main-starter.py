@@ -19,7 +19,7 @@ if __name__ == "__main__":
               Times(VarScalar('marker'), IsNewNeutral()))), None))), VarList('actions')))
 
     p1 = Rule_of_28_Player_PS(default_yes_no_program(), sigma1)
-    p2 = Rule_of_28_Player_PS(default_yes_no_program(), sigmax)
+    p2 = Rule_of_28_Player_PS(default_yes_no_program(), the_boss)
 
     start = time.time()
 

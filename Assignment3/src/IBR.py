@@ -9,6 +9,7 @@ class IBR:
         self.program_generator = program_generator
         self.triages = triages
         self.evaluated_program_count = 0
+        self.match_played_count = 0
 
     def synthesize(self) -> list[GameResults]:
         sigma_0 = self.synthesize_sigma_zero()
@@ -57,15 +58,15 @@ class IBR:
         return None
 
     def play_triage(self, triage, me, opponent, last_result):
-        result = last_result + self.play(me, opponent, triage.matches, triage.target_win_percent)
+        new_result = last_result + self.play(me, opponent, triage.matches, triage.target_win_percent)
 
         if triage.is_loggable:
-            message = ':) PASSED' if result.target_passed else ':( FAILED'
+            message = ':) PASSED' if new_result.target_passed else ':( FAILED'
             print(f'  {message} level {triage.level} of triage with '
-                  f'{result.my_wins}/{result.total_matches} ({result.my_win_percent:2.2f}%) wins, '
+                  f'{new_result.my_wins}/{new_result.total_matches} ({new_result.my_win_percent:2.2f}%) wins, '
                   f'{self.stopwatch.elapsed_str()}, {self.program_generator.total_processed()}')
 
-        return result
+        return new_result
 
     def synthesize_sigma_zero(self) -> GameResults:
         while self.program_generator.has_next():
@@ -92,6 +93,7 @@ class IBR:
 
         try:
             v1, v2, total = play_n_matches_with_early_exit(my_player, opponent_player, n, target_win_percent)
+            self.match_played_count += total
             return GameResults(me, opponent, v1, v2, total, target_win_percent)
         except:
-            return GameResults(me, opponent, 0, 0, n, target_win_percent)
+            return GameResults(me, opponent, 0, 0, 0, target_win_percent)
