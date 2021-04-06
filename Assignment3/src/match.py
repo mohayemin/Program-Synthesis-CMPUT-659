@@ -1,8 +1,12 @@
 from DSL import *
 from game import Game
 
+grand_total_matches_played = 0
+
 
 def play_match(p1, p2):
+    global grand_total_matches_played
+    grand_total_matches_played += 1
     game = Game(n_players=2, dice_number=4, dice_value=6, column_range=[2, 12],
                 offset=2, initial_height=3)
 
@@ -70,7 +74,7 @@ def play_n_matches(p1, p2, n):
 def play_n_matches_with_early_exit(p1, p2, n, target_win_percent):
     half_n = int(n / 2)
     wins_required_to_exit = int(n * target_win_percent / 100)
-    non_wins_required_to_exit = n - wins_required_to_exit
+    non_wins_required_to_exit = n - wins_required_to_exit + 1
 
     p1_victories = 0
     p2_victories = 0
@@ -99,10 +103,10 @@ def play_n_matches_with_early_exit(p1, p2, n, target_win_percent):
         else:
             draws += 1
 
-        # if p1_victories > wins_required_to_exit:
-        #     break
-        # if draws + p2_victories > non_wins_required_to_exit:
-        #     break
+        if p1_victories > wins_required_to_exit:
+            break
+        if draws + p2_victories > non_wins_required_to_exit:
+            break
 
     return p1_victories, p2_victories, p1_victories + p2_victories + draws
 

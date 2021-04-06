@@ -70,6 +70,10 @@ class IBR:
     def synthesize_sigma_zero(self) -> GameResults:
         while self.program_generator.has_next():
             program = self.program_generator.next()
+            self.print_update(program)
+            if not self.program_generator.grammar.is_evaluable(program):
+                continue
+
             player = Rule_of_28_Player_PS(default_yes_no_program(), Argmax(program))
             try:
                 v1, v2 = play_n_matches(player, player, 100)

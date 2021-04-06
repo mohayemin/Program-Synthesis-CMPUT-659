@@ -1,7 +1,7 @@
 import time
 
 from src.DSL import *
-from src.match import play_n_matches, default_yes_no_program
+from src.match import *
 from src.rule_of_28_sketch import Rule_of_28_Player_PS
 
 if __name__ == "__main__":
@@ -22,8 +22,7 @@ if __name__ == "__main__":
     p2 = Rule_of_28_Player_PS(default_yes_no_program(), sigmax)
 
     start = time.time()
-
-    victories1, victories2 = play_n_matches(p1, p2, 1000)
+    victories1, victories2 = play_n_matches_with_early_exit(p1, p2, 1000, 90)
 
     end = time.time()
     print(victories1, victories2, 1000 - victories1 - victories2)

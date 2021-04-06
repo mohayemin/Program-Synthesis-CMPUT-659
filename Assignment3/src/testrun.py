@@ -4,6 +4,7 @@ from src.BUS import BUS
 from src.GameResults import percent
 from src.IBR import IBR
 from src.Triage import create_triage_list
+from src.match import grand_total_matches_played
 from src.stopwatch import Stopwatch
 
 if __name__ == '__main__':
@@ -21,7 +22,7 @@ if __name__ == '__main__':
     stopwatch = Stopwatch()
     # change the triage below to see the differences
     # use no_triage to run without a triage
-    ibr = IBR(stopwatch, bus, given_triage)
+    ibr = IBR(stopwatch, bus, no_triages)
 
     print(f'start synthesis for the following triages at {strftime("%H:%M:%S", localtime())}')
     for triage in ibr.triages:
@@ -40,5 +41,6 @@ if __name__ == '__main__':
     print(f'programs generated     : {bus.total_generated()}')
     print(f'programs evaluated     : {ibr.evaluated_program_count} '
           f'({percent(ibr.evaluated_program_count, bus.total_generated()):.2f}%)')
+    print(f'Total matches played   : {grand_total_matches_played}')
     print(f'Total Time             : {total_time:.2f}s')
     print(f'{bus.total_processed()/total_time} programs per second')
